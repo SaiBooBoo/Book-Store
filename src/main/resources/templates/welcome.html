@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../css/gtvg.css" data-th-href="@{/css/gtvg.css}" />
+    <title>Good Thymes Virtual Grocery</title>
+</head>
+<body>
+<h1 th:text="${message}">Default Welcome Message</h1>
+<p>
+    Today is:
+    <span th:text="${#dates.format(new java.util.Date(), 'dd-MM-yyyy HH:mm')}">
+            Date placeholder
+        </span>
+</p>
+<p data-th-text="#{home.welcome}">Welcome to our grocery store!</p>
+</body>
+</html>

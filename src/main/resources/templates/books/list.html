@@ -1,0 +1,45 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Books</title>
+</head>
+<body>
+<h1>Books</h1>
+<form th:action="@{/books}" method="get">
+    <input name="q" placeholder="Search..." />
+    <button type="submit">Search</button>
+</form>
+
+<ul>
+    <li th:each="b : ${books}">
+        <span th:text="${b.title}">Title</span>
+        —
+        <span th:text="${b.author}">Author</span>
+        (
+        <span th:text="${b.stock}">0</span> in stock
+        )
+        <span th:text="${b.price}">0.00</span>
+
+        <form th:action="@{|/books/${b.id}|}" method="get" style="display:inline">
+            <button type="submit">View</button>
+        </form>
+    </li>
+</ul>
+
+<hr>
+<div>
+    <form th:action="@{/books}" method="get" style="display:inline">
+        <button type="submit">Books</button>
+    </form>
+
+    <form th:action="@{/admin/books}" method="get" style="display:inline">
+        <button type="submit">Admin Books</button>
+    </form>
+
+    <form th:action="@{/admin/orders}" method="get" style="display:inline">
+        <button type="submit">Admin Orders</button>
+    </form>
+</div>
+<hr>
+</body>
+</html>

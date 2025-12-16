@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 th:text="${book.title}">Title</h1>
+<p th:text="${book.description}">Description</p>
+<p>Price: <span th:text="${book.price}">0.00</span></p>
+
+<form th:action="@{/cart/checkout}" method="post">
+  <input type="hidden" name="userId" value="1" />
+  <input type="hidden" name="items[0].bookId" th:value="${book.id}" />
+  <input type="number" name="items[0].quantity" value="1" min="1" />
+  <button type="submit">Buy</button>
+</form>
+
+<hr>
+<div>
+  <form th:action="@{/books}" method="get" style="display:inline">
+    <button type="submit">Books</button>
+  </form>
+
+  <form th:action="@{/admin/books}" method="get" style="display:inline">
+    <button type="submit">Admin Books</button>
+  </form>
+
+  <form th:action="@{/admin/orders}" method="get" style="display:inline">
+    <button type="submit">Admin Orders</button>
+  </form>
+</div>
+<hr>
+</body>
+</html>

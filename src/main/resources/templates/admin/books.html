@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Admin — Books</h1>
+<table>
+    <thead><tr><th>ID</th><th>Title</th><th>Stock</th><th>Price</th><th>Actions</th></tr></thead>
+    <tbody>
+    <tr th:each="b : ${books}">
+        <td th:text="${b.id}"></td>
+        <td th:text="${b.title}"></td>
+        <td th:text="${b.stock}"></td>
+        <td th:text="${b.price}"></td>
+        <td><a th:href="@{|/admin/books/edit/${b.id}|}">Edit</a></td>
+    </tr>
+    </tbody>
+    <p>Please select an option</p>
+    <li>
+        <a th:href="@{/books}">Product List</a>
+    </li>
+</table>
+
+<hr>
+<div>
+    <a th:href="@{/admin/books/new}">
+        <button>Add New Book</button>
+    </a>
+
+</div>
+<hr>
+</body>
+</html>

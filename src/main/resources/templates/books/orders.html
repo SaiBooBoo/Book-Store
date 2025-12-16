@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Admin Orders</h1>
+<table>
+  <thead><tr><th>ID</th><th>User</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody>
+  <tr th:each="o : ${orders}">
+    <td th:text="${o.id}">1</td>
+    <td th:text="${o.user.username}">user</td>
+    <td th:text="${o.total}">0.00</td>
+    <td th:text="${o.status}">NEW</td>
+    <td>
+      <form th:action="@{|/admin/orders/${o.id}/status|}" method="post">
+        <select name="status">
+          <option th:each="s : ${T(your.package.OrderStatus).values()}" th:value="${s}" th:text="${s}"></option>
+        </select>
+        <button type="submit">Update</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<hr>
+<div>
+  <form th:action="@{/books}" method="get" style="display:inline">
+    <button type="submit">Books</button>
+  </form>
+
+  <form th:action="@{/admin/books}" method="get" style="display:inline">
+    <button type="submit">Admin Books</button>
+  </form>
+
+  <form th:action="@{/admin/orders}" method="get" style="display:inline">
+    <button type="submit">Admin Orders</button>
+  </form>
+</div>
+<hr>
+</body>
+</html>
