@@ -4,6 +4,8 @@ import com.example.bookstore.models.Book;
 import com.example.bookstore.repositories.BookRepository;
 import com.example.bookstore.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +24,14 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping
-    public String listBooks(Model model, @RequestParam(required=false) String q) {
-        List<Book> books = (q == null || q.isBlank())
-                ? bookService.findAll()
-                : bookService.search(q);
-        model.addAttribute("books", books);
+    public String listBooks(
+            @RequestParam(required=false) String q,
+            Pageable pageable, Model model) {
+        Page<Book> bookPage = (q == null || q.isBlank())
+                ? bookService.findAll(pageable)
+                : bookService.search(q, pageable);
+        model.addAttribute("bookPage", bookPage);
+        model.addAttribute("q", q);
         return "books/list"; // src/main/resources/templates/books/list.html
     }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
@@ -13,10 +14,16 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required!")
     private String title;
+    @NotBlank(message ="Author is required!")
     private String author;
     private String isbn;
+    @NotNull(message= "Price is required!")
+    @DecimalMin(value= "0.0", inclusive = false, message= "Price must be greater than 0")
     private BigDecimal price;
+    @NotNull(message= "Stock is required!")
+    @Min(value = 0, message = "Stock must me 0 or more")
     private Integer stock;
     private String description;
 

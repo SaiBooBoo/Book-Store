@@ -4,9 +4,13 @@ import com.example.bookstore.models.Book;
 import com.example.bookstore.models.OrderStatus;
 import com.example.bookstore.services.BookService;
 import com.example.bookstore.services.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,14 +47,28 @@ public class AdminController {
     }
 
     @PostMapping("/books")
-    public String createBook(@ModelAttribute Book book) {
+    public String createBook(@Valid @ModelAttribute("book") Book book, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/book-create";
+        }
+
         bookService.save(book);
         return "redirect:/admin/books";
     }
 
     @GetMapping("/books")
-    public String adminBooks(Model model) {
-        model.addAttribute("books", bookService.findAll());
+    public String adminBooks(@RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "5") int size,
+                             @RequestParam(defaultValue = "id") String sortBy,
+                             @RequestParam(defaultValue = "asc") String direction,
+                             Model model) {
+
+        Page<Book> bookPage = bookService.findPaginated(page, size, sortBy, direction);
+        model.addAttribute("bookPage", bookPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
         return "admin/books";
     }
 
@@ -61,6 +79,19 @@ public class AdminController {
         return "admin/books/book-edit";
     }
 
+    @PostMapping("/books/edit/{id}")
+    public String editBookPost(@PathVariable Long id, Model model) {
+        Book book = bookService.findById(id).orElseThrow();
+        model.addAttribute("book", book);
+        return "admin/books/book-edit";
+    }
+
+    @PostMapping("/books/delete/{id}")
+    public String deleteBook(@PathVariable Long id) {
+        bookService.deleteById(id);
+        return "redirect:/admin/books";
+    }
+
     @PostMapping("/books/{id}")
     public String updateBook(@PathVariable Long id, @ModelAttribute Book book) {
         // Ensure the path id is used
@@ -68,4 +99,5 @@ public class AdminController {
         bookService.save(book);
         return "redirect:/admin/books";
     }
+
 }
