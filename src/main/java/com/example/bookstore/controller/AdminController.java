@@ -94,7 +94,6 @@ public class AdminController {
 
     @PostMapping("/books/{id}")
     public String updateBook(@PathVariable Long id, @ModelAttribute Book book) {
-        // Ensure the path id is used
         book.setId(id);
         bookService.save(book);
         return "redirect:/admin/books";

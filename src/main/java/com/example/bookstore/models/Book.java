@@ -23,7 +23,7 @@ public class Book {
     @DecimalMin(value= "0.0", inclusive = false, message= "Price must be greater than 0")
     private BigDecimal price;
     @NotNull(message= "Stock is required!")
-    @Min(value = 0, message = "Stock must me 0 or more")
+    @DecimalMin(value = "0", message = "Stock must me 0 or more")
     private Integer stock;
     private String description;
 

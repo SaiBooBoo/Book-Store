@@ -35,7 +35,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Author</label>
-                                <input type="text" class="form-control" th:field="*{author}"  />
+                                <input type="text" class="form-control" th:field="*{author}"/>
                                 <div class="text-danger small"
                                      th:if="${#fields.hasErrors('author')}"
                                      th:errors="*{author}"></div>
