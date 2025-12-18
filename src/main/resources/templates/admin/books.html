@@ -60,7 +60,7 @@
         <tr th:each="b : ${bookPage.content}">
             <td th:text="${b.id}"></td>
             <td th:text="${b.title}"></td>
-            <td th:text="${b.author}"></td>
+            <td th:text="${b.author.firstName + ' ' + b.author.lastName}"></td>
             <td th:text="${b.stock}"></td>
             <td th:text="${b.price}"></td>
             <td>
