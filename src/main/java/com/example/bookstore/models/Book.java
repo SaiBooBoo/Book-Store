@@ -1,9 +1,6 @@
 package com.example.bookstore.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
@@ -16,15 +13,22 @@ public class Book {
 
     @NotBlank(message = "Title is required!")
     private String title;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
     @NotBlank(message ="Author is required!")
-    private String author;
+    private Author author;
+
     private String isbn;
+
     @NotNull(message= "Price is required!")
     @DecimalMin(value= "0.0", inclusive = false, message= "Price must be greater than 0")
     private BigDecimal price;
+
     @NotNull(message= "Stock is required!")
     @DecimalMin(value = "0", message = "Stock must me 0 or more")
     private Integer stock;
+
     private String description;
 
     public Long getId() {
@@ -43,13 +47,9 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
-    }
+    public Author getAuthor() {return author; }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    public void setAuthor(Author author) { this.author = author;}
 
     public String getIsbn() {
         return isbn;

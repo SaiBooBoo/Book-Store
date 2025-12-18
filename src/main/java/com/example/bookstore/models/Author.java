@@ -1,9 +1,6 @@
 package com.example.bookstore.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +16,21 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Author name is required")
-    private String name;
+    @NotBlank(message = "First name is required")
+    private String firstName;
+
+    @NotBlank(message = "Last name is required")
+    private String lastName;
+
+    @Column(unique = true)
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    private String bio;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY,
+            orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Book> books;
 
 
 }

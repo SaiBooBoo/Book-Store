@@ -1,7 +1,9 @@
 package com.example.bookstore.controller;
 
+import com.example.bookstore.models.Author;
 import com.example.bookstore.models.Book;
 import com.example.bookstore.models.OrderStatus;
+import com.example.bookstore.services.AuthorService;
 import com.example.bookstore.services.BookService;
 import com.example.bookstore.services.OrderService;
 import jakarta.validation.Valid;
@@ -22,6 +24,9 @@ public class AdminController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private AuthorService authorService;
 
     public AdminController(BookService bookService) {
         this.bookService = bookService;
@@ -46,14 +51,43 @@ public class AdminController {
         return "admin/book-create";
     }
 
+    @GetMapping("/authors/new")
+    public String showCreateAuthorForm(Model model) {
+        model.addAttribute("author", new Author());
+        return "admin/author-create";
+    }
+
     @PostMapping("/books")
     public String createBook(@Valid @ModelAttribute("book") Book book, BindingResult result) {
         if (result.hasErrors()) {
             return "admin/book-create";
         }
-
         bookService.save(book);
         return "redirect:/admin/books";
+    }
+
+    @PostMapping("/authors")
+    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/author-create";
+        }
+        authorService.save(author);
+        return "redirect:/admin/books";
+    }
+
+    @GetMapping("/authors")
+    public String adminAuthors(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "5") int size,
+                               @RequestParam(defaultValue = "id") String sortBy,
+                               @RequestParam(defaultValue = "asc") String direction,
+                               Model model) {
+        Page<Author> authorPage = authorService.findPaginated(page, size, sortBy, direction);
+        model.addAttribute("authorPage", authorPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+        return "admin/authors";
     }
 
     @GetMapping("/books")
