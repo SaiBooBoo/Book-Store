@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,8 @@ public class AuthorService {
     public Optional<Author> findById(Long id) {
         return repo.findById(id);
     }
+
+    public List<Author> findAllAuthors() {return repo.findAll();}
 
     public Author save(Author a)
     {

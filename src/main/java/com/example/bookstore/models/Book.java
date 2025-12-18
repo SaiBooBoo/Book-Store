@@ -16,7 +16,7 @@ public class Book {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
-    @NotBlank(message ="Author is required!")
+    @NotNull(message ="Author is required!")
     private Author author;
 
     private String isbn;

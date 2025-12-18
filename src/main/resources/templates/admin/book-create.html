@@ -28,7 +28,10 @@
 
         <div class="mb-3">
             <label class="form-label">Author</label>
-            <input type="text" class="form-control" th:field="*{author}">
+            <select class="form-select" th:field="*{author}">
+                <option value="">Select Author</option>
+                <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.firstName + ' ' + author.lastName}"></option>
+            </select>
             <div class="text-danger small"
                  th:if="${#fields.hasErrors('author')}"
                  th:errors="*{author}"></div>

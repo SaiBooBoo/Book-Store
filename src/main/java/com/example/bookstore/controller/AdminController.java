@@ -48,6 +48,7 @@ public class AdminController {
     @GetMapping("/books/new")
     public String showCreateBookForm(Model model) {
         model.addAttribute("book", new Book());
+        model.addAttribute("authors", authorService.findAllAuthors());
         return "admin/book-create";
     }
 
@@ -57,80 +58,10 @@ public class AdminController {
         return "admin/author-create";
     }
 
-    @PostMapping("/books")
-    public String createBook(@Valid @ModelAttribute("book") Book book, BindingResult result) {
-        if (result.hasErrors()) {
-            return "admin/book-create";
-        }
-        bookService.save(book);
-        return "redirect:/admin/books";
-    }
-
-    @PostMapping("/authors")
-    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result) {
-        if (result.hasErrors()) {
-            return "admin/author-create";
-        }
-        authorService.save(author);
-        return "redirect:/admin/books";
-    }
-
-    @GetMapping("/authors")
-    public String adminAuthors(@RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "5") int size,
-                               @RequestParam(defaultValue = "id") String sortBy,
-                               @RequestParam(defaultValue = "asc") String direction,
-                               Model model) {
-        Page<Author> authorPage = authorService.findPaginated(page, size, sortBy, direction);
-        model.addAttribute("authorPage", authorPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("size", size);
-        model.addAttribute("sortBy", sortBy);
-        model.addAttribute("direction", direction);
-        return "admin/authors";
-    }
-
-    @GetMapping("/books")
-    public String adminBooks(@RequestParam(defaultValue = "0") int page,
-                             @RequestParam(defaultValue = "5") int size,
-                             @RequestParam(defaultValue = "id") String sortBy,
-                             @RequestParam(defaultValue = "asc") String direction,
-                             Model model) {
-
-        Page<Book> bookPage = bookService.findPaginated(page, size, sortBy, direction);
-        model.addAttribute("bookPage", bookPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("size", size);
-        model.addAttribute("sortBy", sortBy);
-        model.addAttribute("direction", direction);
-        return "admin/books";
-    }
-
-    @GetMapping("/books/edit/{id}")
-    public String editBook(@PathVariable Long id, Model model) {
-        Book book = bookService.findById(id).orElseThrow();
-        model.addAttribute("book", book);
-        return "admin/books/book-edit";
-    }
-
     @PostMapping("/books/edit/{id}")
     public String editBookPost(@PathVariable Long id, Model model) {
         Book book = bookService.findById(id).orElseThrow();
         model.addAttribute("book", book);
         return "admin/books/book-edit";
     }
-
-    @PostMapping("/books/delete/{id}")
-    public String deleteBook(@PathVariable Long id) {
-        bookService.deleteById(id);
-        return "redirect:/admin/books";
-    }
-
-    @PostMapping("/books/{id}")
-    public String updateBook(@PathVariable Long id, @ModelAttribute Book book) {
-        book.setId(id);
-        bookService.save(book);
-        return "redirect:/admin/books";
-    }
-
 }

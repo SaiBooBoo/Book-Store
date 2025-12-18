@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-...yourhash..."
+        crossorigin="anonymous">
 <body>
+
+<header th:fragment="adminHeader(title, icon, activePage)"
+        class="navbar navbar-expand-lg container-fluid bg-dark text-white py-3 mb-4 shadow-sm">
+    <div class="container">
+        <h2 class="mb-0">
+            <i class="bi me-2"
+               th:classappend="${icon}"></i>
+            <span th:text="${title}">Admin Panel</span>
+        </h2>
+    </div>
+    <div class="d-flex gap-3">
+        <a th:if="${activePage != 'books'}"
+                th:href="@{/admin/books}"
+           class="btn btn-outline-light"
+        title="Manage Books"><i class="bi bi-stack"></i>
+        </a>
+        <a th:if="${activePage != 'authors'}"
+           th:href="@{/admin/authors}"
+           class="btn btn-outline-light"
+            title="Manage Authors">
+            <i class="bi bi-person-lines-fill"></i>
+        </a>
+    </div>
+
+</header>
 
 </body>
 </html>
