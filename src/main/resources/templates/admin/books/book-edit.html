@@ -35,16 +35,26 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Author</label>
-                                <input type="text" class="form-control" th:field="*{author}"/>
+<!--                                <input type="text" class="form-control" th:field="*{author}"/>-->
+<!--                                <div class="text-danger small"-->
+<!--                                     th:if="${#fields.hasErrors('author')}"-->
+<!--                                     th:errors="*{author}"></div>-->
+<!--                            </div>-->
+                            <select class="form-select" th:field="*{author.id}">
+                                <option value="">Select Author</option>
+                                <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.firstName}"></option>
+                            </select>
                                 <div class="text-danger small"
                                      th:if="${#fields.hasErrors('author')}"
-                                     th:errors="*{author}"></div>
+                                     th:errors="*{author}">
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">ISBN</label>
                                 <input type="text" class="form-control" th:field="*{isbn}" />
                             </div>
                         </div>
+
 
                         <div class="row">
                             <div class="col-md-6 mb-3">

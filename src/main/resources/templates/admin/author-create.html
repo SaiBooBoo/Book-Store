@@ -26,6 +26,15 @@
                         <div class="text-danger small" th:if="${#fields.hasErrors('lastName')}"
                             th:errors="*{lastName}"> </div>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Date of Birth</label>
+                        <input type="date" class="form-control" th:field="*{dateOfBirth}"/>
+                        <div class="text-danger small"
+                             th:if="${#fields.hasErrors('dateOfBirth')}"
+                             th:errors="*{dateOfBirth}"></div>
+
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="text" class="form-control" th:field="*{email}">

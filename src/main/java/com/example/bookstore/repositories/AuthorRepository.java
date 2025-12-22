@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
 
@@ -17,4 +19,5 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     "LOWER(a.email) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Author> searchAuthors(@Param("keyword") String keyword, Pageable pageable);
 
+    Optional<Author> findByEmail(String email);
 }

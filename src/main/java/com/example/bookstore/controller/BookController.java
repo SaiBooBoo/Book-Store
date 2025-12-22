@@ -2,6 +2,7 @@ package com.example.bookstore.controller;
 
 import com.example.bookstore.models.Book;
 import com.example.bookstore.repositories.BookRepository;
+import com.example.bookstore.services.AuthorService;
 import com.example.bookstore.services.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ import java.util.List;
 public class BookController {
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private AuthorService authorService;
 
 
     @GetMapping("/books")
@@ -44,6 +48,7 @@ public class BookController {
     public String editBook(@PathVariable Long id, Model model) {
         Book book = bookService.findById(id).orElseThrow();
         model.addAttribute("book", book);
+        model.addAttribute("authors", authorService.findAllAuthors());
         return "admin/books/book-edit";
     }
 

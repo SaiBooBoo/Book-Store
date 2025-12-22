@@ -2,9 +2,11 @@ package com.example.bookstore.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -25,6 +27,9 @@ public class Author {
     @Column(unique = true)
     @NotBlank(message = "Email is required")
     private String email;
+
+    @PastOrPresent(message = "Date of birth cannot be in the future")
+    private LocalDate dateOfBirth;
 
     private String bio;
 

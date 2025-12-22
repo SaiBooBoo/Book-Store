@@ -1,5 +1,6 @@
 package com.example.bookstore.controller;
 
+import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.services.AuthorService;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class AuthorController {
             return "admin/author-create";
         }
         authorService.save(author);
-        return "redirect:/admin/books";
+        return "redirect:/admin/authors";
     }
 
     @GetMapping("/authors")
@@ -43,5 +44,49 @@ public class AuthorController {
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("direction", direction);
         return "admin/authors";
+    }
+
+    @PostMapping("/authors/{id}/delete")
+    public String deleteAuthor(@PathVariable Long id) {
+        authorService.deleteById(id);
+        return "redirect:/admin/authors";
+    }
+
+
+    @GetMapping("/authors/edit/{id}")
+    public String showEditAuthor(@PathVariable Long id, Model model) {
+        Author author = authorService.findById(id);
+        model.addAttribute("author", author);
+        return "admin/authors/author-edit";
+    }
+
+    @PostMapping("/authors/{id}")
+    public String updateAuthor(@PathVariable Long id,
+                               @Valid @ModelAttribute("author") Author author,
+                               BindingResult result){
+        if(result.hasErrors()){
+            return "admin/authors/author-edit";
+        }
+
+        authorService.save(author);
+        return "redirect:/admin/authors";
+    }
+
+    @PostMapping("/authors/edit/{id}")
+    public String saveAuthor(@Valid @ModelAttribute("author") Author author,
+                             BindingResult result,
+                             Model model){
+        if(result.hasErrors()) {
+            return "admin/authors/author-edit";
+        }
+
+        try {
+            authorService.save(author);
+        } catch (DuplicateEmailException ex) {
+            model.addAttribute("emailError", ex.getMessage());
+            return "admin/authors/author-edit";
+        }
+        authorService.save(author);
+        return "redirect:admin/authors";
     }
 }
