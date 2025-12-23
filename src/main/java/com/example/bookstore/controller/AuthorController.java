@@ -1,5 +1,6 @@
 package com.example.bookstore.controller;
 
+import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.services.AuthorService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -23,11 +25,17 @@ public class AuthorController {
     }
 
     @PostMapping("/authors")
-    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result) {
+    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("authors", authorService.findAllAuthors());
             return "admin/author-create";
         }
-        authorService.save(author);
+        try {
+            authorService.save(author);
+        } catch (DuplicateEmailException ex) {
+            model.addAttribute("emailError", ex.getMessage());
+            return "/admin/authors";
+        }
         return "redirect:/admin/authors";
     }
 
@@ -47,46 +55,55 @@ public class AuthorController {
     }
 
     @PostMapping("/authors/{id}/delete")
-    public String deleteAuthor(@PathVariable Long id) {
-        authorService.deleteById(id);
+    public String deleteAuthor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+       try{
+           authorService.deleteById(id);
+           redirectAttributes.addFlashAttribute("message", "Author deleted successfully");
+       } catch (AuthorHasBookException ex) {
+           redirectAttributes.addFlashAttribute("message", ex.getMessage());
+       }
+
         return "redirect:/admin/authors";
     }
 
 
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthor(@PathVariable Long id, Model model) {
-        Author author = authorService.findById(id);
-        model.addAttribute("author", author);
+        model.addAttribute("author", authorService.findById(id));
         return "admin/authors/author-edit";
     }
 
-    @PostMapping("/authors/{id}")
-    public String updateAuthor(@PathVariable Long id,
-                               @Valid @ModelAttribute("author") Author author,
-                               BindingResult result){
-        if(result.hasErrors()){
-            return "admin/authors/author-edit";
+
+   @PostMapping("/authors/edit/{id}")
+    public String saveAuthor(@Valid @ModelAttribute("author") Author author,
+                             BindingResult result,
+                             Model model){
+        if(result.hasErrors()) {
+            return "/admin/authors/edit";
         }
 
         authorService.save(author);
         return "redirect:/admin/authors";
     }
 
-    @PostMapping("/authors/edit/{id}")
-    public String saveAuthor(@Valid @ModelAttribute("author") Author author,
-                             BindingResult result,
-                             Model model){
-        if(result.hasErrors()) {
+    @PostMapping("/authors/{id}")
+    public String updateAuthor(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("author") Author author,
+            BindingResult result,
+            Model model) {
+
+        if (result.hasErrors()) {
             return "admin/authors/author-edit";
         }
 
         try {
             authorService.save(author);
-        } catch (DuplicateEmailException ex) {
-            model.addAttribute("emailError", ex.getMessage());
+        } catch (IllegalStateException ex) {
+            result.rejectValue("email", "error.author", ex.getMessage());
             return "admin/authors/author-edit";
         }
-        authorService.save(author);
-        return "redirect:admin/authors";
+        return "redirect:/admin/authors";
     }
+
 }

@@ -1,8 +1,10 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,12 @@ public class AuthorService {
     @Autowired
     private AuthorRepository repo;
 
+
+    public AuthorService(AuthorRepository repository) {
+        this.repo = repository;
+    }
+
+    @Transactional(readOnly = true)
     public Page<Author> findAll(Pageable pageable) {
         return repo.findAll(pageable);
     }
@@ -32,18 +40,29 @@ public class AuthorService {
 
     public List<Author> findAllAuthors() {return repo.findAll();}
 
-    public Author save(Author a)
+    public void save(Author author)
     {
-        Optional<Author> existing = repo.findByEmail(a.getEmail());
-        if(existing.isPresent()) {
-            throw new DuplicateEmailException("Email '" + a.getEmail() + "' already exists.");
-        }
-        return repo.save(a);
+       if(author.getId() == null) {
+           if(repo.existsByEmail(author.getEmail())) {
+               throw new IllegalArgumentException("Email already exists");
+           }
+       }
+       else {
+           if(repo.existsByEmailAndIdNot(author.getEmail(), author.getId())) {
+               throw new IllegalArgumentException("Email already exists");
+           }
+       }
+       repo.save(author);
     }
 
+    @Transactional
     public void deleteById(Long id) {
-        if(!repo.existsById(id)) {
-            throw new IllegalArgumentException("Author not found.");
+        Author author = repo.findById(id).orElseThrow(() -> new RuntimeException("Author not found"));
+
+        if (!author.getBooks().isEmpty()) {
+            throw new AuthorHasBookException(
+                    "Cannot delete author who still has books"
+            );
         }
         repo.deleteById(id);
     }
@@ -64,5 +83,6 @@ public class AuthorService {
         Pageable pageable = PageRequest.of(page, size, sort);
         return repo.findAll(pageable);
     }
+
 
 }

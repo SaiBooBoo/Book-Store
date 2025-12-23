@@ -1,6 +1,7 @@
 package com.example.bookstore.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class Author {
 
     @Column(unique = true)
     @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
 
     @PastOrPresent(message = "Date of birth cannot be in the future")

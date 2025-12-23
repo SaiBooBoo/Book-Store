@@ -20,4 +20,8 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     Page<Author> searchAuthors(@Param("keyword") String keyword, Pageable pageable);
 
     Optional<Author> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
 }
