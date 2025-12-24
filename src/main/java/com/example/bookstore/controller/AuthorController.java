@@ -27,14 +27,17 @@ public class AuthorController {
     @PostMapping("/authors")
     public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("authors", authorService.findAllAuthors());
             return "admin/author-create";
         }
         try {
             authorService.save(author);
         } catch (DuplicateEmailException ex) {
-            model.addAttribute("emailError", ex.getMessage());
-            return "/admin/authors";
+           result.rejectValue(
+                   "email",
+                   "error.user",
+                   "This email is already registered"
+           );
+            return "admin/author-create";
         }
         return "redirect:/admin/authors";
     }
@@ -58,9 +61,9 @@ public class AuthorController {
     public String deleteAuthor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
        try{
            authorService.deleteById(id);
-           redirectAttributes.addFlashAttribute("message", "Author deleted successfully");
+           redirectAttributes.addFlashAttribute("successMessage", "Author deleted successfully");
        } catch (AuthorHasBookException ex) {
-           redirectAttributes.addFlashAttribute("message", ex.getMessage());
+           redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
        }
 
         return "redirect:/admin/authors";

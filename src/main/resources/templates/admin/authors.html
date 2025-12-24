@@ -21,11 +21,13 @@
 
 <div class="container mt-4">
 
-    <div class="alert alert-success" th:if="${successMessage}">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
         <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-    <div class="alert alert-danger" th:if="${errorMessage}">
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
         <span th:text="${errorMessage}"></span>
+        <button type="button"  class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <table class="table table-striped table-bordered shadow-sm">
         <thead class="table-dark">
@@ -54,8 +56,7 @@
 
             <td class="text-center">
                 <button type="button"
-                        class="btn btn-danger"
-                        th:disabled="${!#lists.isEmpty(a.books)}"
+                        class="btn btn-outline-danger"
                         data-bs-toggle="modal"
                         th:title="${!#lists.isEmpty(a.books)} ? 'Author still has books' : 'Delete author'"
                         data-bs-target="#deleteConfirmationModal"
@@ -71,55 +72,60 @@
         Add New Author
     </a>
 
-    <nav aria-label="Author pagination"
-         th:if="${authorPage.totalPages > 1}"
-         class="d-flex justify-content-between align-items-center mt-4">
+    <div class="d-flex justify-content-between align-items-center mt-4 container-fluid">
 
         <div class="text-muted">
             Page <span th:text="${authorPage.number + 1}"></span>
             of <span th:text="${authorPage.totalPages}"></span>
         </div>
 
-        <ul class="pagination mb-0">
+        <nav aria-label="Author pagination">
 
-            <li class="page-item"
-                th:classappend="${!authorPage.hasPrevious()} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/admin/authors(page=${authorPage.number - 1}, size=${authorPage.size})}">
-                    Previous
-                </a>
-            </li>
+            <ul class="pagination mb-0">
 
-            <li class="page-item"
-                th:each="i : ${#numbers.sequence(0, authorPage.totalPages - 1)}"
-                th:classappend="${i == authorPage.number} ? 'active'">
-                <a class="page-link"
-                   th:text="${i + 1}"
-                   th:href="@{/admin/authors(page=${i}, size=${authorPage.size})}">
-                </a>
-            </li>
+                <li class="page-item"
+                    th:classappend="${!authorPage.hasPrevious()} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/authors(page=${authorPage.number - 1}, size=${authorPage.size})}">
+                        Previous
+                    </a>
+                </li>
 
-            <li class="page-item"
-                th:classappend="${!authorPage.hasNext()} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/admin/authors(page=${authorPage.number + 1}, size=${authorPage.size})}">
-                    Next
-                </a>
-            </li>
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, authorPage.totalPages - 1)}"
+                    th:classappend="${i == authorPage.number} ? 'active'">
+                    <a class="page-link"
+                       th:text="${i + 1}"
+                       th:href="@{/admin/authors(page=${i}, size=${authorPage.size})}">
+                    </a>
+                </li>
 
-        </ul>
+                <li class="page-item"
+                    th:classappend="${!authorPage.hasNext()} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/authors(page=${authorPage.number + 1}, size=${authorPage.size})}">
+                        Next
+                    </a>
+                </li>
 
+            </ul>
+        </nav>
         <form method="get" class="ms-3">
-            <input  name="page" value="0"/>
+            <ul>
+                <label class="mb-0">Show</label>
+                <select class="form-select form-select-sm w-auto"
+                        name="size"
+                        onchange="this.form.submit()">
 
-                <option value="5"  th:selected="${authorPage.size == 5}">5</option>
-                <option value="10" th:selected="${authorPage.size == 10}">10</option>
-                <option value="20" th:selected="${authorPage.size == 20}">20</option>
+                    <option value="5"  th:selected="${authorPage.size == 5}">5</option>
+                    <option value="10" th:selected="${authorPage.size == 10}">10</option>
+                    <option value="20" th:selected="${authorPage.size == 20}">20</option>
 
-            </select>
+                </select>
+            </ul>
         </form>
 
-    </nav>
+    </div>
 
 
 

@@ -97,7 +97,6 @@
         <nav>
             <ul class="pagination mb-0" th:if="${bookPage.totalPages > 0}">
 
-                <!-- Previous -->
                 <li class="page-item" th:classappend="${!bookPage.hasPrevious()} ? ' disabled'">
                     <a class="page-link"
                        th:href="@{/admin/books(page=${currentPage - 1}, size=${bookPage.size}, sortBy=${sortBy}, direction=${direction})}">
@@ -105,7 +104,6 @@
                     </a>
                 </li>
 
-                <!-- Page numbers -->
                 <li class="page-item"
                     th:each="i : ${#numbers.sequence(0, bookPage.totalPages - 1)}"
                     th:classappend="${i == currentPage} ? ' active'">
@@ -115,7 +113,6 @@
                     </a>
                 </li>
 
-                <!-- Next -->
                 <li class="page-item" th:classappend="${!bookPage.hasNext()} ? ' disabled'">
                     <a class="page-link"
                        th:href="@{/admin/books(page=${currentPage + 1}, size=${bookPage.size}, sortBy=${sortBy}, direction=${direction})}">

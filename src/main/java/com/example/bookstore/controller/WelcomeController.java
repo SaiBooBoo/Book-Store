@@ -16,4 +16,9 @@ public class WelcomeController {
         return "welcome";
     }
 
+    @GetMapping("/home")
+    public String home(Model model) {
+        return "redirect:admin/books";
+    }
+
 }

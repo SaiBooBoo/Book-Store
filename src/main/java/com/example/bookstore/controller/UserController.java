@@ -19,14 +19,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // LIST USERS
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "users/list"; // templates/users/list.html
     }
 
-    // VIEW USER DETAILS
     @GetMapping("/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id)
@@ -35,21 +33,18 @@ public class UserController {
         return "users/view"; // templates/users/view.html
     }
 
-    // SHOW CREATE FORM
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("user", new User());
         return "users/create";
     }
 
-    // CREATE USER
     @PostMapping
     public String createUser(@ModelAttribute User user) {
         userService.createUser(user);
         return "redirect:/users";
     }
 
-    // SHOW EDIT FORM
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id)
@@ -58,14 +53,12 @@ public class UserController {
         return "users/edit";
     }
 
-    // UPDATE USER
     @PostMapping("/{id}")
     public String updateUser(@PathVariable Long id, @ModelAttribute User userDetails) {
         userService.updateUser(id, userDetails);
         return "redirect:/users";
     }
 
-    // DELETE USER
     @PostMapping("/{id}/delete")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

@@ -43,13 +43,8 @@ public class AuthorService {
     public void save(Author author)
     {
        if(author.getId() == null) {
-           if(repo.existsByEmail(author.getEmail())) {
-               throw new IllegalArgumentException("Email already exists");
-           }
-       }
-       else {
-           if(repo.existsByEmailAndIdNot(author.getEmail(), author.getId())) {
-               throw new IllegalArgumentException("Email already exists");
+           if(repo.existsByEmail(author.getEmail()) || repo.existsByEmailAndIdNot(author.getEmail(), author.getId()) ) {
+               throw new DuplicateEmailException("Email already exists");
            }
        }
        repo.save(author);
@@ -64,7 +59,7 @@ public class AuthorService {
                     "Cannot delete author who still has books"
             );
         }
-        repo.deleteById(id);
+        repo.delete(author);
     }
 
     public Page<Author> search(String keyword, Pageable pageable) {
