@@ -17,6 +17,7 @@ public class SecurityConfig {
             return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(auth -> auth
@@ -25,6 +26,7 @@ public class SecurityConfig {
         )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/admin/books", true)
                         .permitAll()
                 )
                 .logout(logout -> logout

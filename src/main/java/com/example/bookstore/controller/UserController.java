@@ -40,8 +40,8 @@ public class UserController {
     }
 
     @PostMapping
-    public String createUser(@ModelAttribute User user) {
-        userService.createUser(user);
+    public String createUser(@PathVariable String username, @PathVariable String password) {
+        userService.createUser(username, password);
         return "redirect:/users";
     }
 
