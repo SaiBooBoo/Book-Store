@@ -7,6 +7,7 @@ import com.example.bookstore.services.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,6 +58,7 @@ public class AuthorController {
         return "admin/authors";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/authors/{id}/delete")
     public String deleteAuthor(@PathVariable Long id, RedirectAttributes redirectAttributes) {
        try{
@@ -82,9 +84,11 @@ public class AuthorController {
                              BindingResult result,
                              Model model){
         if(result.hasErrors()) {
-            return "/admin/authors/edit";
+            return "/admin/authors/author-edit";
         }
-
+        if(true){
+            throw new RuntimeException("It's an error!");
+        }
         authorService.save(author);
         return "redirect:/admin/authors";
     }
@@ -95,7 +99,7 @@ public class AuthorController {
             @Valid @ModelAttribute("author") Author author,
             BindingResult result,
             Model model) {
-
+        model.addAttribute("author", author);
         if (result.hasErrors()) {
             return "admin/authors/author-edit";
         }

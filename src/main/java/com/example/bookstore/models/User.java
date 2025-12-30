@@ -2,8 +2,15 @@ package com.example.bookstore.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class User {
@@ -17,7 +24,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    public User() {
-
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }

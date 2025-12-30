@@ -1,5 +1,8 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.exceptions.DuplicateEmailException;
+import com.example.bookstore.exceptions.DuplicateUsernameException;
+import com.example.bookstore.models.Role;
 import com.example.bookstore.repositories.UserRepository;
 import com.example.bookstore.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +35,12 @@ public class UserService {
     public void createUser(String username, String password)  {
 
         if(userRepository.existsByUsername(username)) {
-            throw new RuntimeException("Username already exists!");
+            throw new DuplicateUsernameException("Username already exists. Find another name.");
         }
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        user.setRole(Role.ROLE_USER);
 
         userRepository.save(user);
     }

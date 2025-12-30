@@ -12,4 +12,5 @@ public class GlobalExceptionHandler {
         model.addAttribute("emailError", ex.getMessage());
         return "admin/authors/author-edit";
     }
+
 }

@@ -2,10 +2,8 @@ package com.example.bookstore.config;
 
 import com.example.bookstore.models.User;
 import com.example.bookstore.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.*;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -23,11 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 
-        return  org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles("USER")
-                .build();
-
+        return new CustomUserDetails(user);
     }
 }

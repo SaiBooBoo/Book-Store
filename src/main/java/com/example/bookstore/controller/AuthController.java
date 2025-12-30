@@ -25,23 +25,28 @@ public class AuthController {
         return "intro/login";
     }
 
-    @PostMapping("/register") // continue from here
-    public String register(@ModelAttribute("user")User user, BindingResult result, Model model) {
-        model.addAttribute("user", new User());
-        try{
+    @PostMapping("/register")
+    public String register(
+            @ModelAttribute("user") User user,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            return "intro/register";
+        }
+
+        try {
             userService.createUser(user.getUsername(), user.getPassword());
         } catch (DuplicateUsernameException ex) {
-            result.rejectValue(
-                    "username",
-                    "error.user",
-                    ex.getMessage()
-            );
+            result.rejectValue("username", null, ex.getMessage());
+            return "intro/register";
         }
-        return "intro/login";
+
+        return "redirect:/login";
     }
 
     @GetMapping("/register")
-    public String getRegister() {
+    public String getRegister(Model model) {
+        model.addAttribute("user", new User());
         return "intro/register";
     }
 
