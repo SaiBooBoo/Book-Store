@@ -1,5 +1,6 @@
 package com.example.bookstore.models;
 
+import com.example.bookstore.dto.BookDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

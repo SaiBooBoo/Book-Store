@@ -1,10 +1,11 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.dto.AuthorDetailDto;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
+import com.example.bookstore.mapper.AuthorMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,15 +13,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthorService {
 
     @Autowired
     private AuthorRepository repo;
+    private AuthorMapper mapper;
 
 
     public AuthorService(AuthorRepository repository) {
@@ -33,9 +35,17 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public Author findById(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Author not found"));
+    public AuthorDetailDto findById(Long id) {
+
+        return mapper.toDetailDto(repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Author not found")));
+    }
+
+    @Transactional(readOnly = true)
+    public AuthorDetailDto findAuthorDetail(Long id) {
+        Author author = repo.findByIdWithBooks(id)
+                .orElseThrow(() -> new NotFoundException("Author not found"));
+        return mapper.toDetailDto(author);
     }
 
     public List<Author> findAllAuthors() {return repo.findAll();}
