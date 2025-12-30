@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.Optional;
 
 @Repository
@@ -20,4 +21,18 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     Page<Author> searchAuthors(@Param("keyword") String keyword, Pageable pageable);
 
     Optional<Author> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
+
+    @Query("SELECT a FROM Author a LEFT JOIN FETCH a.books WHERE a.id = :id")
+    Optional<Author> findByIdWithBooks(@Param("id") Long id);
+
+    @Query("""
+    SELECT a FROM Author a 
+    LEFT JOIN FETCH a.books
+    WHERE a.id = :id
+""")
+    Optional<Author> findAuthorWithBooks(@Param("id") Long id);
 }

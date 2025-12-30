@@ -1,37 +1,20 @@
-package com.example.bookstore.models;
+package com.example.bookstore.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Entity
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+public class BookDto {
+
     private Long id;
-
-    @NotBlank(message = "Title is required!")
     private String title;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    @NotNull(message ="Author is required!")
-    private Author author;
-
     private String isbn;
-
-    @NotNull(message= "Price is required!")
-    @DecimalMin(value= "0.0", inclusive = false, message= "Price must be greater than 0")
     private BigDecimal price;
-
-    @NotNull(message= "Stock is required!")
-    @DecimalMin(value = "0", message = "Stock must me 0 or more")
     private Integer stock;
-
     private String description;
+
+    private String authorName;
 
     public Long getId() {
         return id;
@@ -47,14 +30,6 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
     }
 
     public String getIsbn() {
@@ -87,5 +62,13 @@ public class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 }

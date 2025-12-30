@@ -1,6 +1,9 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.dto.AuthorDetailDto;
+import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
+import com.example.bookstore.mapper.AuthorMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,40 +15,58 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthorService {
 
-    @Autowired
     private AuthorRepository repo;
+    private AuthorMapper mapper;
 
+    public AuthorService(AuthorRepository repository) {
+        this.repo = repository;
+    }
+
+    @Transactional(readOnly = true)
     public Page<Author> findAll(Pageable pageable) {
         return repo.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public Author findById(Long id) {
-        return repo.findById(id)
+    public AuthorDetailDto findById(Long id) {
+
+        return mapper.toDetailDto(repo.findByIdWithBooks(id)
+                .orElseThrow(() -> new IllegalArgumentException("Author not found")));
+    }
+
+    @Transactional(readOnly = true)
+    public AuthorDetailDto findAuthorDetail(Long id) {
+        Author author = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Author not found"));
+        return mapper.toDetailDto(author);
     }
 
     public List<Author> findAllAuthors() {return repo.findAll();}
 
-    public Author save(Author a)
+    public void save(Author author)
     {
-        Optional<Author> existing = repo.findByEmail(a.getEmail());
-        if(existing.isPresent()) {
-            throw new DuplicateEmailException("Email '" + a.getEmail() + "' already exists.");
-        }
-        return repo.save(a);
+       if(author.getId() == null) {
+           if(repo.existsByEmail(author.getEmail()) || repo.existsByEmailAndIdNot(author.getEmail(), author.getId()) ) {
+               throw new DuplicateEmailException("Email already exists");
+           }
+       }
+       repo.save(author);
     }
 
+    @Transactional
     public void deleteById(Long id) {
-        if(!repo.existsById(id)) {
-            throw new IllegalArgumentException("Author not found.");
+        Author author = repo.findById(id).orElseThrow(() -> new RuntimeException("Author not found"));
+
+        if (!author.getBooks().isEmpty()) {
+            throw new AuthorHasBookException(
+                    "Cannot delete author who still has books"
+            );
         }
-        repo.deleteById(id);
+        repo.delete(author);
     }
 
     public Page<Author> search(String keyword, Pageable pageable) {
@@ -64,5 +85,6 @@ public class AuthorService {
         Pageable pageable = PageRequest.of(page, size, sort);
         return repo.findAll(pageable);
     }
+
 
 }

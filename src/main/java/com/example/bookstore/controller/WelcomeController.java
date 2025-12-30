@@ -1,5 +1,6 @@
 package com.example.bookstore.controller;
 
+import com.example.bookstore.models.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,11 @@ public class WelcomeController {
         model.addAttribute("message", "Hello, Your Lover, Aik Shen with Thymeleaf!");
         model.addAttribute("today", LocalDateTime.now());
         return "welcome";
+    }
+
+    @GetMapping("/home")
+    public String home(Model model) {
+        return "redirect:admin/books";
     }
 
 }
