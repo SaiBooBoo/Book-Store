@@ -1,5 +1,6 @@
 package com.example.bookstore.controller;
 
+import com.example.bookstore.dto.UserDto;
 import com.example.bookstore.models.User;
 import com.example.bookstore.services.UserService;
 import jakarta.validation.Valid;
@@ -26,8 +27,8 @@ public class UserController {
 
     @GetMapping
     public String listUsers(Model model) {
-        List<User> users =  userService.findAll();
-        model.addAttribute("users",users);
+        List<UserDto> users = userService.findAll();
+        model.addAttribute("users", users);
         return "/admin/users";
     }
 

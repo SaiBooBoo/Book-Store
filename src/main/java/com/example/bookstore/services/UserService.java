@@ -1,7 +1,9 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.dto.UserDto;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.exceptions.DuplicateUsernameException;
+import com.example.bookstore.mapper.UserMapper;
 import com.example.bookstore.models.Role;
 import com.example.bookstore.repositories.UserRepository;
 import com.example.bookstore.models.User;
@@ -18,16 +20,21 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper mapper;
 
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       UserMapper mapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        List<User> users = userRepository.findAll();
+        System.out.println(users);
+        return mapper.toDtoList(users);
     }
 
     public void createUser(String username, String password)  {

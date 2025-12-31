@@ -1,7 +1,5 @@
 package com.example.bookstore.dto;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
 

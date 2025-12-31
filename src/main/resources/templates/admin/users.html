@@ -36,6 +36,7 @@
                     </form>
                 </td>
             </tr>
+            <p th:text="${users}"></p>
             <tr th:if="${#lists.isEmpty(users)}">
                 No users found.
             </tr>
