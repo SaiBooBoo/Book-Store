@@ -1,6 +1,5 @@
 package com.example.bookstore.dto;
 
-import lombok.Data;
 
 import java.math.BigDecimal;
 

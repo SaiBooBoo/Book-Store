@@ -14,26 +14,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private BookService bookService;
-    private AuthorService authorService;
+    private final BookService bookService;
 
-    public AdminController(BookService bookService, AuthorService authorService) {
+    public AdminController(BookService bookService) {
         this.bookService = bookService;
-        this.authorService = authorService;
     }
 
-    @GetMapping("/books/new")
-    public String showCreateBookForm(Model model) {
-        model.addAttribute("book", new Book());
-        model.addAttribute("authors", authorService.findAllAuthors());
-        return "admin/book-create";
-    }
-
-    @GetMapping("/authors/new")
-    public String showCreateAuthorForm(Model model) {
-        model.addAttribute("author", new Author());
-        return "admin/author-create";
-    }
 
     @PostMapping("/books/edit/{id}")
     public String editBookPost(@PathVariable Long id, Model model) {

@@ -19,10 +19,10 @@ import java.util.List;
 @Service
 public class AuthorService {
 
-    private AuthorRepository repo;
-    private AuthorMapper mapper;
+    private final AuthorRepository repo;
 
-    public AuthorService(AuthorRepository repository) {
+    public AuthorService(
+            AuthorRepository repository) {
         this.repo = repository;
     }
 
@@ -32,18 +32,19 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public AuthorDetailDto findById(Long id) {
-
-        return mapper.toDetailDto(repo.findByIdWithBooks(id)
-                .orElseThrow(() -> new IllegalArgumentException("Author not found")));
+    public Author findById(Long id) {
+        Author author = repo.findById(id).orElseThrow(() -> new RuntimeException("Author id not found."));
+        return author;
+//        return mapper.toDetailDto(repo.findByIdWithBooks(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Author not found")));
     }
 
-    @Transactional(readOnly = true)
-    public AuthorDetailDto findAuthorDetail(Long id) {
-        Author author = repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Author not found"));
-        return mapper.toDetailDto(author);
-    }
+//    @Transactional(readOnly = true)
+//    public AuthorDetailDto findAuthorDetail(Long id) {
+//        Author author = repo.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Author not found"));
+//        return mapper.toDetailDto(author);
+//    }
 
     public List<Author> findAllAuthors() {return repo.findAll();}
 

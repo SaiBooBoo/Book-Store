@@ -3,6 +3,7 @@ package com.example.bookstore.controller;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
+import com.example.bookstore.repositories.AuthorRepository;
 import com.example.bookstore.services.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,25 +21,56 @@ public class AuthorController {
 
     @Autowired
     private AuthorService authorService;
+    @Autowired
+    private AuthorRepository repo;
 
     public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
 
+
+    // ----------------- new -------------------
+    @GetMapping("/authors/new")
+    public String showCreateAuthorForm(Model model) {
+        model.addAttribute("author", new Author());
+        return "admin/author-create";
+    }
+
     @PostMapping("/authors")
-    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result, Model model) {
+    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result) {
+
+        authorService.save(author);
+        return "redirect:/admin/authors";
+    }
+
+    // -----------------  edit -----------------
+
+    @GetMapping("/authors/edit/{id}")
+    public String showEditAuthor(@PathVariable Long id, Model model) {
+        Author author = authorService.findById(id);
+
+        model.addAttribute("author", author);
+        return "admin/authors/author-edit";
+    }
+
+    @PostMapping("/authors/{id}")
+    public String updateAuthor(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("author") Author author,
+            BindingResult result) {
+
         if (result.hasErrors()) {
-            return "admin/author-create";
+            System.out.println(result.getAllErrors());
+            return "admin/authors/author-edit";
         }
+
+        author.setId(id);
+
         try {
             authorService.save(author);
-        } catch (DuplicateEmailException ex) {
-           result.rejectValue(
-                   "email",
-                   "error.user",
-                   "This email is already registered"
-           );
-            return "admin/author-create";
+        } catch (IllegalStateException ex) {
+            result.rejectValue("email", "error.author", ex.getMessage());
+            return "admin/authors/author-edit";
         }
         return "redirect:/admin/authors";
     }
@@ -49,7 +81,9 @@ public class AuthorController {
                                @RequestParam(defaultValue = "id") String sortBy,
                                @RequestParam(defaultValue = "asc") String direction,
                                Model model) {
+
         Page<Author> authorPage = authorService.findPaginated(page, size, sortBy, direction);
+        model.addAttribute("authors", authorPage.getContent());
         model.addAttribute("authorPage", authorPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
@@ -68,48 +102,6 @@ public class AuthorController {
            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
        }
 
-        return "redirect:/admin/authors";
-    }
-
-
-    @GetMapping("/authors/edit/{id}")
-    public String showEditAuthor(@PathVariable Long id, Model model) {
-        model.addAttribute("author", authorService.findById(id));
-        return "admin/authors/author-edit";
-    }
-
-
-   @PostMapping("/authors/edit/{id}")
-    public String saveAuthor(@Valid @ModelAttribute("author") Author author,
-                             BindingResult result,
-                             Model model){
-        if(result.hasErrors()) {
-            return "/admin/authors/author-edit";
-        }
-        if(true){
-            throw new RuntimeException("It's an error!");
-        }
-        authorService.save(author);
-        return "redirect:/admin/authors";
-    }
-
-    @PostMapping("/authors/{id}")
-    public String updateAuthor(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("author") Author author,
-            BindingResult result,
-            Model model) {
-        model.addAttribute("author", author);
-        if (result.hasErrors()) {
-            return "admin/authors/author-edit";
-        }
-
-        try {
-            authorService.save(author);
-        } catch (IllegalStateException ex) {
-            result.rejectValue("email", "error.author", ex.getMessage());
-            return "admin/authors/author-edit";
-        }
         return "redirect:/admin/authors";
     }
 

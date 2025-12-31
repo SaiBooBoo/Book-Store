@@ -27,6 +27,12 @@ public class BookController {
     @Autowired
     private AuthorService authorService;
 
+    @GetMapping("/books/new")
+    public String showCreateBookForm(Model model) {
+        model.addAttribute("book", new Book());
+        model.addAttribute("authors", authorService.findAllAuthors());
+        return "admin/book-create";
+    }
 
     @GetMapping("/books")
     public String adminBooks(@RequestParam(defaultValue = "0") int page,

@@ -26,7 +26,7 @@ public class SecurityConfig  {
                 .exceptionHandling(exception -> exception.accessDeniedPage("/access-denied"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/admin/books/delete/**").hasRole("ADMIN")
-                .requestMatchers("/login", "/register", "/webjars/**", "/", "/access-denied").permitAll()
+                .requestMatchers("/login", "/register", "/webjars/**", "/", "/access-denied", "/users", "/users/**").permitAll()
 
                 .anyRequest().authenticated()
         )
