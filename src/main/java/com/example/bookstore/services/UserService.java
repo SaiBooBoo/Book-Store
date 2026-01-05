@@ -38,7 +38,6 @@ public class UserService {
     }
 
     public void createUser(String username, String password)  {
-
         if(userRepository.existsByUsername(username)) {
             throw new DuplicateUsernameException("Username already exists. Find another name.");
         }

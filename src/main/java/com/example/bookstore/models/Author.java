@@ -17,18 +17,13 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "First name is required")
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @Column(unique = true)
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
     private String email;
 
-    @PastOrPresent(message = "Date of birth cannot be in the future")
     private LocalDate dateOfBirth;
 
     private String bio;
@@ -36,6 +31,7 @@ public class Author {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY,
             orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Book> books;
+
 
     public Long getId() {
         return id;

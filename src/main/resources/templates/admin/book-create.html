@@ -25,21 +25,19 @@
 
         <div class="mb-3">
             <label class="form-label">Author</label>
-            <select class="form-select" th:field="*{author}">
+            <select class="form-select" th:field="*{authorId}">
                 <option value="">Select Author</option>
                 <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.firstName + ' ' + author.lastName}"></option>
             </select>
             <div class="text-danger small"
-                 th:if="${#fields.hasErrors('author')}"
-                 th:errors="*{author}"></div>
+                 th:if="${#fields.hasErrors('authorId')}"
+                 th:errors="*{authorId}"></div>
         </div>
-
 
         <div class="mb-3">
             <label class="form-label">ISBN</label>
             <input type="text" class="form-control" th:field="*{isbn}">
         </div>
-
 
         <div class="mb-3">
             <label class="form-label">Price</label>

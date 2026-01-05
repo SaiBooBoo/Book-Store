@@ -52,16 +52,12 @@
             </td>
 
             <td sec:authorize="hasRole('ADMIN')">
-                <button type="hidden"
-                        class="btn btn-outline-danger"
-                        data-bs-toggle="modal"
-                        th:name="${_csrf.parameterName}"
-                        th:value="${_csrf.token}"
-                        th:title="${!#lists.isEmpty(a)} ? 'Author still has books' : 'Delete author'"
-                        data-bs-target="#deleteConfirmationModal"
-                        th:attr="data-author-id=${a.id}">
-                    <i class="bi bi-trash"></i>
-                </button>
+                <form th:action="@{'/admin/authors/' + ${a.id} + '/delete'}" method="post">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+
             </td>
         </tr>
         </tbody>

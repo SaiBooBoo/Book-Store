@@ -1,19 +1,30 @@
 package com.example.bookstore.dto;
 
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 
 public class BookDto {
 
     private Long id;
+    @NotBlank(message = "Title is required!")
     private String title;
     private String isbn;
+    @NotNull(message= "Price is required!")
+    @DecimalMin(value= "0.0", inclusive = false, message= "Price must be greater than 0")
     private BigDecimal price;
+    @NotNull(message= "Stock is required!")
+    @DecimalMin(value = "0", message = "Stock must me 0 or more")
     private Integer stock;
     private String description;
 
     private String authorName;
+    @NotNull(message ="Author is required!")
+    private Long authorId;
 
     public Long getId() {
         return id;
@@ -69,5 +80,13 @@ public class BookDto {
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 }

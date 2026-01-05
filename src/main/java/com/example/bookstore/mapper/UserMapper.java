@@ -11,6 +11,7 @@ import java.util.List;
 public interface UserMapper {
 
     @Mapping(target = "role", expression = "java(user.getRole().name())")
+    @Mapping(target = "password", ignore = true)
     UserDto toDto(User user);
 
     User toEntity(UserDto user);

@@ -1,5 +1,6 @@
 package com.example.bookstore.controller;
 
+import com.example.bookstore.dto.AuthorDetailDto;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
@@ -19,17 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin")
 public class AuthorController {
 
-    @Autowired
-    private AuthorService authorService;
-    @Autowired
-    private AuthorRepository repo;
+    private final AuthorService authorService;
 
     public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
 
-
-    // ----------------- new -------------------
     @GetMapping("/authors/new")
     public String showCreateAuthorForm(Model model) {
         model.addAttribute("author", new Author());
@@ -37,17 +33,20 @@ public class AuthorController {
     }
 
     @PostMapping("/authors")
-    public String createAuthor(@Valid @ModelAttribute("author") Author author, BindingResult result) {
+    public String createAuthor(@Valid @ModelAttribute("author") AuthorDetailDto authorDto, BindingResult result, Model model) {
 
-        authorService.save(author);
+       try{
+           authorService.save(authorDto);
+       } catch(RuntimeException ex){
+           result.reject("author.error", ex.getMessage());
+           return "admin/author-create";
+       }
         return "redirect:/admin/authors";
     }
 
-    // -----------------  edit -----------------
-
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthor(@PathVariable Long id, Model model) {
-        Author author = authorService.findById(id);
+        AuthorDetailDto author = authorService.findById(id);
 
         model.addAttribute("author", author);
         return "admin/authors/author-edit";
@@ -56,7 +55,7 @@ public class AuthorController {
     @PostMapping("/authors/{id}")
     public String updateAuthor(
             @PathVariable Long id,
-            @Valid @ModelAttribute("author") Author author,
+            @Valid @ModelAttribute("author") AuthorDetailDto authorDto,
             BindingResult result) {
 
         if (result.hasErrors()) {
@@ -64,10 +63,10 @@ public class AuthorController {
             return "admin/authors/author-edit";
         }
 
-        author.setId(id);
+        authorDto.setId(id);
 
         try {
-            authorService.save(author);
+            authorService.save(authorDto);
         } catch (IllegalStateException ex) {
             result.rejectValue("email", "error.author", ex.getMessage());
             return "admin/authors/author-edit";
@@ -82,7 +81,7 @@ public class AuthorController {
                                @RequestParam(defaultValue = "asc") String direction,
                                Model model) {
 
-        Page<Author> authorPage = authorService.findPaginated(page, size, sortBy, direction);
+        Page<AuthorDetailDto> authorPage = authorService.findPaginated(page, size, sortBy, direction);
         model.addAttribute("authors", authorPage.getContent());
         model.addAttribute("authorPage", authorPage);
         model.addAttribute("currentPage", page);
