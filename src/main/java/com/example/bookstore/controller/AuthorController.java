@@ -6,9 +6,11 @@ import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
 import com.example.bookstore.services.AuthorService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,14 +18,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin")
 public class AuthorController {
 
     private final AuthorService authorService;
+    private final AuthorRepository authorRepo;
 
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService, AuthorRepository authorRepo) {
         this.authorService = authorService;
+        this.authorRepo = authorRepo;
     }
 
     @GetMapping("/authors/new")
@@ -104,4 +111,24 @@ public class AuthorController {
         return "redirect:/admin/authors";
     }
 
+
+    @GetMapping("/authors/export")
+    public void exportAuthorsToExcel(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=authors.xlsx");
+
+        List<Author> authors = authorRepo.findAll();
+
+        try {
+            authorService.exportAuthorToExcel(
+                    authors,
+                    response.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
