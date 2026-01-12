@@ -1,14 +1,12 @@
-package com.example.bookstore.controller;
+package com.example.bookstore.controllers.thymeleafController;
 
-import com.example.bookstore.dto.AuthorDetailDto;
+import com.example.bookstore.dto.AuthorDto;
 import com.example.bookstore.exceptions.AuthorHasBookException;
-import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
 import com.example.bookstore.services.AuthorService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,7 +38,7 @@ public class AuthorController {
     }
 
     @PostMapping("/authors")
-    public String createAuthor(@Valid @ModelAttribute("author") AuthorDetailDto authorDto, BindingResult result, Model model) {
+    public String createAuthor(@Valid @ModelAttribute("author") AuthorDto authorDto, BindingResult result, Model model) {
 
        try{
            authorService.save(authorDto);
@@ -53,7 +51,7 @@ public class AuthorController {
 
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthor(@PathVariable Long id, Model model) {
-        AuthorDetailDto author = authorService.findById(id);
+        AuthorDto author = authorService.findById(id);
 
         model.addAttribute("author", author);
         return "admin/authors/author-edit";
@@ -62,7 +60,7 @@ public class AuthorController {
     @PostMapping("/authors/{id}")
     public String updateAuthor(
             @PathVariable Long id,
-            @Valid @ModelAttribute("author") AuthorDetailDto authorDto,
+            @Valid @ModelAttribute("author") AuthorDto authorDto,
             BindingResult result) {
 
         if (result.hasErrors()) {
@@ -88,7 +86,7 @@ public class AuthorController {
                                @RequestParam(defaultValue = "asc") String direction,
                                Model model) {
 
-        Page<AuthorDetailDto> authorPage = authorService.findPaginated(page, size, sortBy, direction);
+        Page<AuthorDto> authorPage = authorService.findPaginated(page, size, sortBy, direction);
         model.addAttribute("authors", authorPage.getContent());
         model.addAttribute("authorPage", authorPage);
         model.addAttribute("currentPage", page);

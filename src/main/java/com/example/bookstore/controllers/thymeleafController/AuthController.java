@@ -1,4 +1,4 @@
-package com.example.bookstore.controller;
+package com.example.bookstore.controllers.thymeleafController;
 
 import com.example.bookstore.exceptions.DuplicateUsernameException;
 import com.example.bookstore.models.User;
@@ -9,7 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthController {

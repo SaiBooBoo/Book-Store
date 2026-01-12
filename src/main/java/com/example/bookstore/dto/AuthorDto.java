@@ -7,7 +7,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.util.List;
 
-public class AuthorDetailDto {
+public class AuthorDto {
 
     private Long id;
     @NotBlank(message = "First name is required")

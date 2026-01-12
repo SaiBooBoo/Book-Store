@@ -1,6 +1,6 @@
 package com.example.bookstore.services;
 
-import com.example.bookstore.dto.AuthorDetailDto;
+import com.example.bookstore.dto.AuthorDto;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.mapper.AuthorMapper;
@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,17 +31,17 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public AuthorDetailDto findById(Long id) {
+    public AuthorDto findById(Long id) {
         Author author = repo.findById(id).orElseThrow(() -> new RuntimeException("Author id not found."));
         return mapper.toDetailDto(author);
     }
 
-    public List<AuthorDetailDto> findAllAuthors() {
+    public List<AuthorDto> findAllAuthors() {
         List<Author> authors = repo.findAll();
         return mapper.toDtoList(authors);
     }
 
-    public void save(AuthorDetailDto authorDto)
+    public void save(AuthorDto authorDto)
     {
         Author author = mapper.toAuthorDetail(authorDto);
        if(author.getId() == null) {
@@ -65,7 +64,7 @@ public class AuthorService {
         repo.delete(author);
     }
 
-    public Page<AuthorDetailDto> findPaginated(int page, int size, String sortBy, String direction) {
+    public Page<AuthorDto> findPaginated(int page, int size, String sortBy, String direction) {
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
@@ -74,7 +73,7 @@ public class AuthorService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Author> authorPage = repo.findAll(pageable);
-        List<AuthorDetailDto> dtoList = mapper.toDtoList(authorPage.getContent());
+        List<AuthorDto> dtoList = mapper.toDtoList(authorPage.getContent());
 
         return new PageImpl<>(
                 dtoList,
@@ -111,7 +110,8 @@ public class AuthorService {
             row.createCell(5).setCellValue(author.getBio());
         }
 
-        for (int i = 0; i <= 5; i++) {
+        int columnCount = headerRow.getPhysicalNumberOfCells();
+        for (int i = 0; i < columnCount; i++) {
             sheet.autoSizeColumn(i);
         }
 

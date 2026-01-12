@@ -1,7 +1,6 @@
-package com.example.bookstore.controller;
+package com.example.bookstore.controllers.thymeleafController;
 
 import com.example.bookstore.dto.BookDto;
-import com.example.bookstore.models.Book;
 import com.example.bookstore.services.AuthorService;
 import com.example.bookstore.services.BookService;
 import jakarta.validation.Valid;
@@ -13,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/admin")
 public class BookController {
@@ -24,12 +21,6 @@ public class BookController {
     @Autowired
     private AuthorService authorService;
 
-    @GetMapping("/books/findAll")
-    public String findAll(Model model) {
-       List<BookDto> books = bookService.findAll();
-       model.addAttribute("books", books);
-       return "/admin/bookdtoTest";
-    }
 
     @GetMapping("/books/new")
     public String showCreateBookForm(Model model) {
