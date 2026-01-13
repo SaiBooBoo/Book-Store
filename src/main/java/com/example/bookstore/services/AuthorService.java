@@ -1,6 +1,6 @@
 package com.example.bookstore.services;
 
-import com.example.bookstore.dto.AuthorDto;
+import com.example.bookstore.dtos.AuthorDto;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
 import com.example.bookstore.mapper.AuthorMapper;
@@ -41,7 +41,7 @@ public class AuthorService {
         return mapper.toDtoList(authors);
     }
 
-    public void save(AuthorDto authorDto)
+    public Author save(AuthorDto authorDto)
     {
         Author author = mapper.toAuthorDetail(authorDto);
        if(author.getId() == null) {
@@ -49,7 +49,7 @@ public class AuthorService {
                throw new DuplicateEmailException("Email already exists");
            }
        }
-       repo.save(author);
+       return repo.save(author);
     }
 
     @Transactional

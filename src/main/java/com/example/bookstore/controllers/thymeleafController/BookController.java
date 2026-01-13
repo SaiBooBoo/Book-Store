@@ -1,6 +1,6 @@
 package com.example.bookstore.controllers.thymeleafController;
 
-import com.example.bookstore.dto.BookDto;
+import com.example.bookstore.dtos.BookDto;
 import com.example.bookstore.services.AuthorService;
 import com.example.bookstore.services.BookService;
 import jakarta.validation.Valid;

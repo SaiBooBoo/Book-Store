@@ -1,8 +1,9 @@
 package com.example.bookstore.controllers.angularController;
 
-import com.example.bookstore.dto.BookDto;
+import com.example.bookstore.dtos.BookDto;
 import com.example.bookstore.services.BookService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/admin")
 public class AdminBookRestController {
 
-    private final BookService bookService;
+    private final BookService service;
 
     public AdminBookRestController(BookService bookService) {
-        this.bookService = bookService;
+        this.service = bookService;
     }
 
     @GetMapping("/books")
@@ -23,7 +24,13 @@ public class AdminBookRestController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        return bookService.findPaginated(page,size, sortBy, direction);
+        return service.findPaginated(page,size, sortBy, direction);
+    }
+
+    @PostMapping("/new/book")
+    public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){
+        BookDto savedBook = service.createBook(bookDto);
+        return ResponseEntity.ok(savedBook);
     }
 
 }

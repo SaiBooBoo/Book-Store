@@ -1,6 +1,6 @@
 package com.example.bookstore.controllers.thymeleafController;
 
-import com.example.bookstore.dto.AuthorDto;
+import com.example.bookstore.dtos.AuthorDto;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;

@@ -1,12 +1,13 @@
 package com.example.bookstore.controllers.angularController;
 
-import com.example.bookstore.dto.AuthorDto;
+import com.example.bookstore.dtos.AuthorDto;
+import com.example.bookstore.models.Author;
 import com.example.bookstore.services.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("api/admin")
@@ -26,5 +27,14 @@ public class AdminAuthorRestController {
             @RequestParam(defaultValue = "asc") String direction
     ) {
         return service.findPaginated(page, size, sortBy, direction);
+    }
+
+    @PostMapping("/new/author")
+    public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorDto authorDto){
+        Author savedAuthor = service.save(authorDto);
+        System.out.println(savedAuthor);
+        authorDto.setId(savedAuthor.getId());
+
+        return ResponseEntity.ok(authorDto);
     }
 }

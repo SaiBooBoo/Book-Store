@@ -1,6 +1,6 @@
 package com.example.bookstore.controllers.thymeleafController;
 
-import com.example.bookstore.dto.UserDto;
+import com.example.bookstore.dtos.UserDto;
 import com.example.bookstore.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

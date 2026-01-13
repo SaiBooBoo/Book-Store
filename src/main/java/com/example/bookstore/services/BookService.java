@@ -1,6 +1,6 @@
 package com.example.bookstore.services;
 
-import com.example.bookstore.dto.BookDto;
+import com.example.bookstore.dtos.BookDto;
 import com.example.bookstore.mapper.BookMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.models.Book;

@@ -1,11 +1,10 @@
 package com.example.bookstore.mapper;
 
-import com.example.bookstore.dto.BookDto;
+import com.example.bookstore.dtos.BookDto;
 import com.example.bookstore.models.Book;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 

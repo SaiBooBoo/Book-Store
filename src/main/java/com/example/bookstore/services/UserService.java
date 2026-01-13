@@ -1,19 +1,16 @@
 package com.example.bookstore.services;
 
-import com.example.bookstore.dto.UserDto;
-import com.example.bookstore.exceptions.DuplicateEmailException;
+import com.example.bookstore.dtos.UserDto;
 import com.example.bookstore.exceptions.DuplicateUsernameException;
 import com.example.bookstore.mapper.UserMapper;
 import com.example.bookstore.models.Role;
 import com.example.bookstore.repositories.UserRepository;
 import com.example.bookstore.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
