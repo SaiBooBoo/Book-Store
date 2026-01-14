@@ -26,7 +26,7 @@ public class SecurityConfig  {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable());
 
@@ -34,10 +34,10 @@ public class SecurityConfig  {
          *  http
          *                 .exceptionHandling(exception -> exception.accessDeniedPage("/access-denied"))
          *                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()
-         *                    //     .requestMatchers(HttpMethod.POST, "/admin/books/delete/**").hasRole("ADMIN")
-         *                // .requestMatchers("/login", "/register", "/webjars/**", "/", "/access-denied", "/users", "/users/**").permitAll()
+         *                         .requestMatchers(HttpMethod.POST, "/admin/books/delete/**").hasRole("ADMIN")
+         *                 .requestMatchers("/login", "/register", "/webjars/**", "/", "/access-denied", "/users", "/users/**").permitAll()
          *
-         * //                .anyRequest().authenticated()
+         *                 .anyRequest().authenticated()
          *         )
          *                 .formLogin(form -> form
          *                         .loginPage("/login")

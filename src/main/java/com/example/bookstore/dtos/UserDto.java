@@ -6,6 +6,12 @@ public class UserDto {
     private String username;
     private String role;
 
+    public UserDto(Long id, String username, String role) {
+        this.id = id;
+        this.username = username;
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }

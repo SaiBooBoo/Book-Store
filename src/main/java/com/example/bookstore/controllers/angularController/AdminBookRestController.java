@@ -33,4 +33,10 @@ public class AdminBookRestController {
         return ResponseEntity.ok(savedBook);
     }
 
+    @DeleteMapping("/delete/book/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id){
+        service.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
 }
