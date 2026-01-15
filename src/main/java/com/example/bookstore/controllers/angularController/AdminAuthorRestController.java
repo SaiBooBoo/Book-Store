@@ -36,14 +36,14 @@ public class AdminAuthorRestController {
         return ResponseEntity.ok(service.findAllAuthors());
     }
 
-    @PostMapping("/new/author")
+    @PostMapping("/author")
     public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorDto authorDto){
         Author savedAuthor = service.save(authorDto);
         authorDto.setId(savedAuthor.getId());
         return ResponseEntity.ok(authorDto);
     }
 
-    @DeleteMapping("/delete/author/{id}")
+    @DeleteMapping("/author/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();

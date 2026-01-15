@@ -27,13 +27,13 @@ public class AdminBookRestController {
         return service.findPaginated(page,size, sortBy, direction);
     }
 
-    @PostMapping("/new/book")
+    @PostMapping("/book")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){
         BookDto savedBook = service.createBook(bookDto);
         return ResponseEntity.ok(savedBook);
     }
 
-    @DeleteMapping("/delete/book/{id}")
+    @DeleteMapping("/book/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id){
         service.deleteById(id);
         return ResponseEntity.ok().build();

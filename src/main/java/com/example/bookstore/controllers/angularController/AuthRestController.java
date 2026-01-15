@@ -3,7 +3,6 @@ package com.example.bookstore.controllers.angularController;
 import com.example.bookstore.dtos.UserDto;
 import com.example.bookstore.models.User;
 import com.example.bookstore.repositories.UserRepository;
-import com.example.bookstore.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

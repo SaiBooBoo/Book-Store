@@ -26,14 +26,15 @@ public class SecurityConfig  {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+//                        .requestMatchers("/api/auth/login").permitAll()
+//                        .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/api/auth/login")
-                        .successHandler((req, res, auth) -> res.setStatus(200))
-                        .failureHandler((req, res, ex) -> res.setStatus(401))
-                )
+//                .formLogin(form -> form
+//                        .loginProcessingUrl("/api/auth/login")
+//                        .successHandler((req, res, auth) -> res.setStatus(200))
+//                        .failureHandler((req, res, ex) -> res.setStatus(401))
+//                )
                 .httpBasic(httpBasic -> httpBasic.disable());
 
 
