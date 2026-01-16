@@ -1,8 +1,11 @@
 package com.example.bookstore.services;
 
 import com.example.bookstore.dtos.AuthorDto;
+import com.example.bookstore.dtos.table.DataTableInput;
+import com.example.bookstore.dtos.table.DataTableOutput;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
+import com.example.bookstore.filter.AuthorFilter;
 import com.example.bookstore.mapper.AuthorMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
@@ -17,23 +20,26 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
 
     private final AuthorRepository repo;
     private final AuthorMapper mapper;
+    private final AuthorMapper authorMapper;
 
     public AuthorService(
-            AuthorRepository repository, AuthorMapper mapper) {
+            AuthorRepository repository, AuthorMapper mapper, AuthorMapper authorMapper) {
         this.repo = repository;
         this.mapper = mapper;
+        this.authorMapper = authorMapper;
     }
 
     @Transactional(readOnly = true)
     public AuthorDto findById(Long id) {
         Author author = repo.findById(id).orElseThrow(() -> new RuntimeException("Author id not found."));
-        return mapper.toDetailDto(author);
+        return mapper.toDto(author);
     }
 
     public List<AuthorDto> findAllAuthors() {
@@ -117,5 +123,77 @@ public class AuthorService {
 
         workbook.write(outputStream);
         workbook.close();
+    }
+
+
+    public DataTableOutput<AuthorDto> findAuthorsDataTable(
+            DataTableInput input
+    ) {
+
+        int uiPage = input.getPageIndex() == null ? 1 : input.getPageIndex();
+        int page = Math.max(uiPage - 1, 0);
+        int size = input.getPageSize() == null ? 10: input.getPageSize();
+
+        Sort sort = Sort.unsorted();
+        if (input.getSortField() != null && input.getSortOrder() != null) {
+            Sort.Direction dir =
+                    ("descend".equalsIgnoreCase(input.getSortOrder()) || "desc".equalsIgnoreCase(input.getSortOrder()))
+                            ? Sort.Direction.DESC
+                            : Sort.Direction.ASC;
+            sort = Sort.by(dir, input.getSortField());
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Author> pageResult;
+
+        if (input.getSearchValue() != null && !input.getSearchValue().isBlank()) {
+            pageResult = repo.search(input.getSearchValue(), pageable);
+        } else {
+            pageResult = repo.findAll(pageable);
+        }
+
+        List<AuthorDto> dtos = pageResult.getContent().stream()
+                .map(authorMapper::toDto)
+                .collect(Collectors.toList());
+
+        Page<AuthorDto> dtoPage = pageResult.map(authorMapper::toDto);
+        return DataTableOutput.of(dtoPage, input);
+
+    }
+
+    static void getPageIndex(int pageIndex2, int pageSize2, String sortField, String sortOrder, DataTableInput<AuthorFilter> input) {
+        int pageIndex = Math.max(pageIndex2 - 1, 0);
+        int pageSize = pageSize2;
+
+        Sort sort = Sort.unsorted();
+
+        if (sortField != null && sortOrder != null){
+            Sort.Direction direction = "descend".equalsIgnoreCase(sortOrder)
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+
+            sort = Sort.by(direction, sortField);
+        }
+
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
+    }
+
+    private boolean hasSearch(DataTableInput<?> input) {
+        return input.getSearchValue() != null && !input.getSearchValue().isBlank();
+    }
+
+    private DataTableOutput<AuthorDto> buildResponse(
+            DataTableInput<?> input, Page<?> page, List<AuthorDto> data
+    ) {
+        DataTableOutput<AuthorDto> output = new DataTableOutput<>();
+
+        output.setDraw(input.getPageIndex());
+        output.setRecordsTotal(page.getTotalElements());
+        output.setRecordsFiltered(page.getTotalElements());
+        output.setData(data);
+        output.setError("");
+
+        return output;
     }
 }

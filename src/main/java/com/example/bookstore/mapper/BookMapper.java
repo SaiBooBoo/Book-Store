@@ -19,7 +19,7 @@ public interface BookMapper {
 
     Book toEntity(BookDto dto);
 
-    List<BookDto> toDtoListTest(List<Book> books);
+    List<BookDto> toDtoList(List<Book> books);
 
     @Mapping(target="author", ignore = true)
     void updateEntityFromDto(BookDto dto, @MappingTarget Book book);

@@ -1,6 +1,7 @@
 package com.example.bookstore.services;
 
 import com.example.bookstore.dtos.BookDto;
+import com.example.bookstore.dtos.table.DataTableInput;
 import com.example.bookstore.mapper.BookMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.models.Book;
@@ -27,7 +28,7 @@ public class BookService {
 
     public List<BookDto> findAll() {
         List<Book> books = bookRepo.findAll();
-        return mapper.toDtoListTest(books);
+        return mapper.toDtoList(books);
     }
 
     public BookDto findById(Long id) {
@@ -68,7 +69,7 @@ public class BookService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Book> bookPage = bookRepo.findAll(pageable);
-        List<BookDto> dtoList = mapper.toDtoListTest(bookPage.getContent());
+        List<BookDto> dtoList = mapper.toDtoList(bookPage.getContent());
 
         return new PageImpl<>(
                 dtoList,
@@ -89,4 +90,47 @@ public class BookService {
                 .orElseThrow(() -> new RuntimeException("Author not found"));
         book.setAuthor(author);
     }
+
+//    public DataTableOutput<BookDto> findBooksDataTable(
+//            DataTableInput<BookDto> input, Page<?> page, List<BookDto> data) {
+//
+//        AuthorService.getPageIndex(input.getPageIndex(), input.getPageSize(), input.getSortField(), input.getSortOrder(), input);
+//
+//        Page<Book> page;
+//
+//        if (hasSearch(input)) {
+//            page = bookRepo.search(
+//                    input.getSearchValue(),
+//                    pageable
+//            );
+//        } else {
+//            page = bookRepo.findAll(pageable);
+//        }
+//
+//        List<BookDto> data = page
+//                .getContent()
+//                .stream()
+//                .map(mapper::toDto)
+//                .toList();
+//
+//        return buildResponse(input, page, data);
+//    }
+
+    private boolean hasSearch(DataTableInput<?> input) {
+        return input.getSearchValue() != null && !input.getSearchValue().isBlank();
+    }
+
+//    private DataTableOutput<BookDto> buildResponse(
+//            DataTableOutput<?> input, Page<?> page, List<BookDto> data
+//    ){
+//        DataTableOutput<BookDto> output = new DataTableOutput<>();
+//
+////        output.setDraw(input.getPageIndex());
+//        output.setRecordsTotal(page.getTotalElements());
+//        output.setRecordsFiltered(page.getTotalElements());
+//        output.setData(data);
+//        output.setError("");
+//
+//    }
+
 }

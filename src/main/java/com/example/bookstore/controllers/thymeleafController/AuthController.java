@@ -19,7 +19,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @GetMapping("/login")
+    //@GetMapping("/login")
     public String login() {
         return "intro/login";
     }

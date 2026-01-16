@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/admin")
-public class AdminBookRestController {
+public class BookResources {
 
     private final BookService service;
 
-    public AdminBookRestController(BookService bookService) {
+    public BookResources(BookService bookService) {
         this.service = bookService;
     }
 
     @GetMapping("/books")
-    public Page<BookDto> getBooks(
+    public Page<BookDto> getBooksPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -26,6 +26,13 @@ public class AdminBookRestController {
     ) {
         return service.findPaginated(page,size, sortBy, direction);
     }
+
+//    @PostMapping("/books/datatable")
+//    public DataTableOutput<BookDto> getBooks(
+//            @RequestBody DataTableInput<BookDto> input
+//            ) {
+//        return service.findBooksDataTable(input);
+//    }
 
     @PostMapping("/book")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){

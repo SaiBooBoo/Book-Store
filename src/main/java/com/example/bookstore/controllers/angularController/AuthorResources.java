@@ -1,6 +1,8 @@
 package com.example.bookstore.controllers.angularController;
 
 import com.example.bookstore.dtos.AuthorDto;
+import com.example.bookstore.dtos.table.DataTableInput;
+import com.example.bookstore.dtos.table.DataTableOutput;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.services.AuthorService;
 import jakarta.validation.Valid;
@@ -13,11 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/admin")
-public class AdminAuthorRestController {
+public class AuthorResources {
 
     private final AuthorService service;
 
-    public AdminAuthorRestController(AuthorService service) {
+    public AuthorResources(AuthorService service) {
         this.service = service;
     }
 
@@ -29,6 +31,14 @@ public class AdminAuthorRestController {
             @RequestParam(defaultValue = "asc") String direction
     ) {
         return service.findPaginated(page, size, sortBy, direction);
+    }
+
+    @PostMapping("/authors/datatable")
+    public ResponseEntity<DataTableOutput<AuthorDto>> authorsDataTable(
+            @RequestBody DataTableInput input
+    ) {
+        DataTableOutput<AuthorDto> output = service.findAuthorsDataTable(input);
+        return ResponseEntity.ok(output);
     }
 
     @GetMapping("/authors/all")

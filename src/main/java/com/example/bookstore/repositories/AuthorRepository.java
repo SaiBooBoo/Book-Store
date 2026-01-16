@@ -35,4 +35,12 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     WHERE a.id = :id
 """)
     Optional<Author> findAuthorWithBooks(@Param("id") Long id);
+
+    @Query("""
+    SELECT a FROM Author a 
+    WHERE LOWER(a.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR
+    LOWER(a.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR
+    LOWER(a.email) LIKE LOWER(CONCAT('%', :search, '%'))
+    """)
+    Page<Author> search(@Param("search") String search, Pageable pageable);
 }
