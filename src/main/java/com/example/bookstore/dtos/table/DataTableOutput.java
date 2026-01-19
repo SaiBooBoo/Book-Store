@@ -3,7 +3,6 @@ package com.example.bookstore.dtos.table;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.Page;
 
 import java.util.Collections;
@@ -35,24 +34,27 @@ public class DataTableOutput<T>{
         return build(page.getContent(), page.getTotalElements(), null);
     }
 
+    public static <E> DataTableOutput<E> of(Page<E> page, long totalCount) {
+        Objects.requireNonNull(page, "page must not be null");
+        return build(page.getContent(), totalCount, null);
+    }
+
+    public static <E> DataTableOutput<E> of(List<E> list, long totalCount) {
+        Objects.requireNonNull(list, "list must not be null");
+        return build(list, totalCount, null);
+    }
+
+
     public static <E> DataTableOutput<E> of(Page<E> page, DataTableInput input) {
         Objects.requireNonNull(page, "page must not be null");
         Objects.requireNonNull(input, "input must not be null");
-        Integer draw = input.getDraw();
-        if (draw == null && input.getPageIndex() != null) {
-            draw = input.getPageIndex();
-        }
-        return build(page.getContent(), page.getTotalElements(), draw);
+        return build(page.getContent(), page.getTotalElements(), input.getDraw());
     }
 
     public static <E> DataTableOutput<E> of(List<E> list, long totalCount, DataTableInput input) {
         Objects.requireNonNull(list, "list must not be null");
         Objects.requireNonNull(input, "input must not be null");
-        Integer draw = input.getDraw();
-        if (draw == null && input.getPageIndex() != null) {
-            draw = input.getPageIndex();
-        }
-        return build(list, totalCount, draw);
+        return build(list, totalCount, input.getDraw());
     }
 
     private static <E> DataTableOutput<E> build(List<E> data, long totalCount, Integer draw) {

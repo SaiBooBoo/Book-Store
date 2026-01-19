@@ -1,5 +1,8 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.criteriaQuery.AuthorQueryCriteria;
+import com.example.bookstore.criteriaQuery.CriteriaUtils;
+import com.example.bookstore.criteriaQuery.QueryHelper;
 import com.example.bookstore.dtos.AuthorDto;
 import com.example.bookstore.dtos.table.DataTableInput;
 import com.example.bookstore.dtos.table.DataTableOutput;
@@ -195,5 +198,10 @@ public class AuthorService {
         output.setError("");
 
         return output;
+    }
+
+    public Page<Author> findAuthors(AuthorQueryCriteria criteria) {
+        Pageable pageable = CriteriaUtils.getPageable(criteria);
+        return repo.findAll((root, cq, cb) -> QueryHelper.getPredicate(root, criteria, cq, cb), pageable);
     }
 }
