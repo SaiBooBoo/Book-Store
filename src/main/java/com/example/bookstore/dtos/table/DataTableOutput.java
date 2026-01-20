@@ -69,4 +69,15 @@ public class DataTableOutput<T>{
         return output;
     }
 
+    public static <T> DataTableOutput<T> of(Page<T> page, Integer draw) {
+        DataTableOutput<T> out = new DataTableOutput<>();
+        out.setDraw(draw);
+        out.setData(page.getContent());
+        out.setRecordsTotal(page.getTotalElements());
+        out.setRecordsFiltered(page.getTotalElements());
+        out.setError(null);
+        return out;
+    }
+
+
 }

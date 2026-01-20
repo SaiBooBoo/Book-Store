@@ -9,9 +9,9 @@ import com.example.bookstore.mapper.AuthorMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.services.AuthorService;
 import jakarta.validation.Valid;
-import lombok.Builder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.JsonNode;
@@ -23,7 +23,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/admin")
-@Builder
 public class AuthorResources {
 
     private final AuthorService service;
@@ -51,39 +50,32 @@ public class AuthorResources {
         return service.findPaginated(page, size, sortBy, direction);
     }
 
-   // @PostMapping("/authors/datatable")
-//    public ResponseEntity<DataTableOutput<AuthorDto>> authorsDataTable(
-//            @RequestBody DataTableInput input
-//    ) {
-//        DataTableOutput<AuthorDto> output = service.findAuthorsDataTable(input);
-//        return ResponseEntity.ok(output);
-//    }
-
     @GetMapping("/authors/all")
     public ResponseEntity<List<AuthorDto>> getAllAuthors() {
         return ResponseEntity.ok(service.findAllAuthors());
     }
 
-    @PostMapping("/author")
+    @PostMapping("/authors")
     public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorDto authorDto){
-        Author savedAuthor = service.save(authorDto);
+        Author savedAuthor = service.create(authorDto);
+        savedAuthor.setId(null);
         authorDto.setId(savedAuthor.getId());
-        return ResponseEntity.ok(authorDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authorDto);
     }
-
+    // api/admin/author/delete/{id}
     @DeleteMapping("/author/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         service.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/authors/datatable")
     public ResponseEntity<DataTableOutput<AuthorDto>> authorsDataTable(
             @RequestBody DataTableInput<AuthorQueryCriteria> input
     ) {
+        // continue here tomorrow
         AuthorQueryCriteria criteria = input.getQueryCriteria();
         criteria.setPageable(input.getPageable());
-
         Page<Author> page = service.findAuthors(criteria);
         Page<AuthorDto> dtoPage = page.map(authorMapper::toDto);
         return ResponseEntity.ok(DataTableOutput.of(dtoPage, input.getDraw()));

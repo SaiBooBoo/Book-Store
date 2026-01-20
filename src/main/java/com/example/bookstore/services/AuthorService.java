@@ -12,6 +12,7 @@ import com.example.bookstore.filter.AuthorFilter;
 import com.example.bookstore.mapper.AuthorMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
+import jakarta.validation.Valid;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
@@ -52,7 +52,7 @@ public class AuthorService {
 
     public Author save(AuthorDto authorDto)
     {
-        Author author = mapper.toAuthorDetail(authorDto);
+        Author author = mapper.toEntity(authorDto);
        if(author.getId() == null) {
            if(repo.existsByEmail(author.getEmail()) || repo.existsByEmailAndIdNot(author.getEmail(), author.getId()) ) {
                throw new DuplicateEmailException("Email already exists");
@@ -158,16 +158,15 @@ public class AuthorService {
 
         List<AuthorDto> dtos = pageResult.getContent().stream()
                 .map(authorMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
 
         Page<AuthorDto> dtoPage = pageResult.map(authorMapper::toDto);
-        return DataTableOutput.of(dtoPage, input);
+        return DataTableOutput.of(dtoPage, input.getDraw());
 
     }
 
     static void getPageIndex(int pageIndex2, int pageSize2, String sortField, String sortOrder, DataTableInput<AuthorFilter> input) {
         int pageIndex = Math.max(pageIndex2 - 1, 0);
-        int pageSize = pageSize2;
 
         Sort sort = Sort.unsorted();
 
@@ -179,7 +178,7 @@ public class AuthorService {
             sort = Sort.by(direction, sortField);
         }
 
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize2, sort);
     }
 
     private boolean hasSearch(DataTableInput<?> input) {
@@ -204,4 +203,11 @@ public class AuthorService {
         Pageable pageable = CriteriaUtils.getPageable(criteria);
         return repo.findAll((root, cq, cb) -> QueryHelper.getPredicate(root, criteria, cq, cb), pageable);
     }
+
+    public Author create(@Valid AuthorDto authorDto) {
+        Author saved = mapper.toEntity(authorDto);
+        return repo.save(saved);
+    }
+
+
 }

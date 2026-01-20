@@ -46,7 +46,6 @@ public final class QueryHelper {
         }
 
         List<Predicate> predicates = new ArrayList<>();
-
         List<Field> fields = getAllFields(criteriaObject.getClass());
         {
             for (Field field: fields){
@@ -63,11 +62,26 @@ public final class QueryHelper {
 
                 if (shouldSkip(rawValue, q.type())) continue;
 
-                if (q.distinct()) {
+                boolean hasJoin = StringUtils.hasText(q.joinName());
+                if (q.distinct() && hasJoin) {
                     cq.distinct(true);
                 }
+                if (StringUtils.hasText(q.blurry())) {
+                    String[] blurryFields = q.blurry().split(",");
+                    List<Predicate> orPredicates = new ArrayList<>();
 
-                Path<?> pathRoot = root;
+                    for (String bf : blurryFields) {
+                        orPredicates.add(
+                                cb.like(
+                                        cb.lower(root.get(bf.trim()).as(String.class)),
+                                        "%" + rawValue.toString().toLowerCase() + "%"
+                                )
+                        );
+                    }
+                    predicates.add(cb.or(orPredicates.toArray(new Predicate[0])));
+                    continue;
+                }
+
                 From<?, ?> from = createJoinIfNeeded(root, q);
                 String attributeName = StringUtils.hasText(q.propName()) ? q.propName() : field.getName();
 
@@ -75,6 +89,7 @@ public final class QueryHelper {
                 if (single != null) predicates.add(single);
             }
             return predicates.isEmpty() ? cb.conjunction() : cb.and(predicates.toArray(new Predicate[0]));
+
         }
     }
 
@@ -100,17 +115,10 @@ public final class QueryHelper {
             return root;
         }
 
-        String[] joinParts = Arrays.stream(q.joinName().split(">"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .toArray(String[]::new);
-
         From<?, ?> from = root;
-
-        for (String part : joinParts) {
-            from = from.join(part, JoinType.LEFT);
+        for (String part : q.joinName().split(">")) {
+            from = from.join(part.trim(), JoinType.LEFT);
         }
-
         return from;
     }
 
@@ -198,15 +206,9 @@ public final class QueryHelper {
     }
 
     private static boolean shouldSkip(Object val, Type type) {
-        if (val == null) {
-            return !(type == Type.IS_NULL || type == Type.NOT_NULL);
-        }
-        if (val instanceof String s) {
-            return s.isBlank();
-        }
-        if (val instanceof Collection<?> c) {
-            return c.isEmpty();
-        }
+        if (val == null) return !(type == Type.IS_NULL || type == Type.NOT_NULL);
+        if (val instanceof String s) return s.isBlank();
+        if (val instanceof Collection<?> c) return c.isEmpty();
         return false;
     }
 }

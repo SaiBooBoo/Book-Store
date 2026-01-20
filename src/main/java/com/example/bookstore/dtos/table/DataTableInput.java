@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import tools.jackson.databind.JsonNode;
 
 
 @Data
@@ -22,7 +20,7 @@ public class DataTableInput<T> {
     private Integer pageSize = Integer.MAX_VALUE;
 
     @JsonProperty("queryCriteria")
-    private JsonNode queryCriteria;
+    private T queryCriteria;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String sortField;
@@ -34,10 +32,25 @@ public class DataTableInput<T> {
 
     private Integer draw;
 
+    public Integer getDraw() {
+        return draw == null ? 1 : draw;
+    }
+
     public Pageable getPageable() {
-        int startIndex = pageIndex - 1;
-        Sort.Direction dir = Sort.Direction.valueOf(sortOrder.toUpperCase());
-        return PageRequest.of(startIndex, pageSize, Sort.by(dir, sortField));
+
+        int uiPage = pageIndex == null || pageIndex < 1 ? 1 : pageIndex;
+        int page = uiPage - 1;
+        int size = pageSize == null || pageSize <= 0 ? 10 : pageSize;
+
+        if (sortField == null || sortOrder == null) {
+            return PageRequest.of(page, size);
+        }
+
+        Sort.Direction dir =
+                "descend".equalsIgnoreCase(sortOrder) || "desc".equalsIgnoreCase(sortOrder)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        return PageRequest.of(page, size, Sort.by(dir, sortField));
     }
 
 }

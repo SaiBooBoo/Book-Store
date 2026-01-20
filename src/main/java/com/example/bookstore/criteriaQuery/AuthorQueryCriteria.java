@@ -3,10 +3,6 @@ package com.example.bookstore.criteriaQuery;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
-\
-import org.thymeleaf.util.ObjectUtils;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.Date;
 import java.util.List;
