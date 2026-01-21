@@ -50,20 +50,28 @@ public class AuthorResources {
         return service.findPaginated(page, size, sortBy, direction);
     }
 
+    @GetMapping("/email-exists")
+    public ResponseEntity<Boolean> emailExists(@RequestParam String email, @RequestParam(required = false) Long excludeId) {
+        return ResponseEntity.ok(service.emailExists(email, excludeId));
+    }
+
     @GetMapping("/authors/all")
     public ResponseEntity<List<AuthorDto>> getAllAuthors() {
         return ResponseEntity.ok(service.findAllAuthors());
     }
 
+    @GetMapping("/author/{id}")
+    public ResponseEntity<AuthorDto> getAuthor(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAuthorById(id));
+    }
+
     @PostMapping("/authors")
     public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody AuthorDto authorDto){
-        Author savedAuthor = service.create(authorDto);
-        savedAuthor.setId(null);
-        authorDto.setId(savedAuthor.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorDto);
+       service.createAuthor(authorDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     // api/admin/author/delete/{id}
-    @DeleteMapping("/author/{id}")
+    @DeleteMapping("/author/delete/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -81,9 +89,20 @@ public class AuthorResources {
         return ResponseEntity.ok(DataTableOutput.of(dtoPage, input.getDraw()));
     }
 
+    @PutMapping("/author/{id}")
+    public ResponseEntity<AuthorDto> updateAuthor (
+            @PathVariable Long id,
+            @Valid @RequestBody AuthorDto request
+    ){
+        AuthorDto author = service.updateAuthor(id, request);
+        return ResponseEntity.ok(author);
+    }
+
+
     private AuthorQueryCriteria deserialize(JsonNode jsonNode) {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(jsonNode, AuthorQueryCriteria.class);
     }
+
 
 }

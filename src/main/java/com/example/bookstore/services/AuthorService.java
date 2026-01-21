@@ -8,10 +8,12 @@ import com.example.bookstore.dtos.table.DataTableInput;
 import com.example.bookstore.dtos.table.DataTableOutput;
 import com.example.bookstore.exceptions.AuthorHasBookException;
 import com.example.bookstore.exceptions.DuplicateEmailException;
+import com.example.bookstore.exceptions.ResourceNotFoundException;
 import com.example.bookstore.filter.AuthorFilter;
 import com.example.bookstore.mapper.AuthorMapper;
 import com.example.bookstore.models.Author;
 import com.example.bookstore.repositories.AuthorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -199,6 +201,34 @@ public class AuthorService {
         return output;
     }
 
+    public boolean emailExists(String email, Long excludeId) {
+        if (excludeId == null) {
+            return repo.existsByEmail(email);
+        }
+        return repo.existsByEmailAndIdNot(email, excludeId);
+    }
+
+    public Author createAuthor(AuthorDto dto){
+
+        if (repo.existsByEmail(dto.getEmail())){
+            throw new DuplicateEmailException("Email already exists");
+        }
+
+        Author author = new Author();
+        author.setFirstName(dto.getFirstName());
+        author.setLastName(dto.getLastName());
+        author.setEmail(dto.getEmail());
+        author.setBio(dto.getBio());
+
+        return repo.save(author);
+    }
+
+    public AuthorDto getAuthorById(Long id) {
+        Author author = repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found"));
+        return mapper.toDto(author);
+    }
+
     public Page<Author> findAuthors(AuthorQueryCriteria criteria) {
         Pageable pageable = CriteriaUtils.getPageable(criteria);
         return repo.findAll((root, cq, cb) -> QueryHelper.getPredicate(root, criteria, cq, cb), pageable);
@@ -209,5 +239,22 @@ public class AuthorService {
         return repo.save(saved);
     }
 
+    public AuthorDto updateAuthor(Long id, AuthorDto dto) {
+        Author author = repo.findById(id)
+                .orElseThrow(() ->
+                    new ResourceNotFoundException("Author not found with id: " + id)
+                );
+
+        if (repo.existsByEmailAndIdNot(dto.getEmail(), author.getId())) {
+            throw new DuplicateEmailException("Email already exists");
+        }
+
+        author.setFirstName(dto.getFirstName());
+        author.setLastName(dto.getLastName());
+        author.setEmail(dto.getEmail());
+        author.setBio(dto.getBio());
+
+        return mapper.toDto(repo.save(author));
+    }
 
 }

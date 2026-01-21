@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Author {
 
     @Id

@@ -2,7 +2,6 @@ package com.example.bookstore.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,10 +29,29 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    public String handleDuplicateEmail(DuplicateEmailException ex, Model model) {
-        model.addAttribute("emailError", ex.getMessage());
-        return "admin/authors/author-edit";
+
+//    @ExceptionHandler(DuplicateEmailException.class)
+//    public String handleDuplicateEmailThymeleaf(DuplicateEmailException ex, Model model) {
+//        model.addAttribute("emailError", ex.getMessage());
+//        return "admin/authors/author-edit";
+//    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
     }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<?> handleDuplicateEmail(DuplicateEmailException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                        "status", 409,
+                        "field", "email",
+                        "message", ex.getMessage()
+                )
+        );
+    }
+
 
 }
