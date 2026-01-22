@@ -79,7 +79,7 @@ public class BookService {
     }
 
     @Transactional
-    public void updateBook(Long id, BookDto bookDto) {
+    public BookDto updateBook(Long id, BookDto bookDto) {
 
         Book book = bookRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book with that does not exist"));
@@ -89,48 +89,25 @@ public class BookService {
         Author author = authorRepo.findById(bookDto.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("Author not found"));
         book.setAuthor(author);
-    }
 
-//    public DataTableOutput<BookDto> findBooksDataTable(
-//            DataTableInput<BookDto> input, Page<?> page, List<BookDto> data) {
-//
-//        AuthorService.getPageIndex(input.getPageIndex(), input.getPageSize(), input.getSortField(), input.getSortOrder(), input);
-//
-//        Page<Book> page;
-//
-//        if (hasSearch(input)) {
-//            page = bookRepo.search(
-//                    input.getSearchValue(),
-//                    pageable
-//            );
-//        } else {
-//            page = bookRepo.findAll(pageable);
-//        }
-//
-//        List<BookDto> data = page
-//                .getContent()
-//                .stream()
-//                .map(mapper::toDto)
-//                .toList();
-//
-//        return buildResponse(input, page, data);
-//    }
+        book.setTitle(bookDto.getTitle());
+        book.setIsbn(bookDto.getIsbn());
+        book.setPrice(bookDto.getPrice());
+        book.setDescription(bookDto.getDescription());
+        book.setStock(bookDto.getStock());
+
+        bookRepo.save(book);
+
+        return mapper.toDto(book);
+    }
 
     private boolean hasSearch(DataTableInput<?> input) {
         return input.getSearchValue() != null && !input.getSearchValue().isBlank();
     }
 
-//    private DataTableOutput<BookDto> buildResponse(
-//            DataTableOutput<?> input, Page<?> page, List<BookDto> data
-//    ){
-//        DataTableOutput<BookDto> output = new DataTableOutput<>();
-//
-////        output.setDraw(input.getPageIndex());
-//        output.setRecordsTotal(page.getTotalElements());
-//        output.setRecordsFiltered(page.getTotalElements());
-//        output.setData(data);
-//        output.setError("");
-//
-//    }
+    public Book getBookById(Long id) {
+        return bookRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book with that does not exist"));
+    }
 
 }

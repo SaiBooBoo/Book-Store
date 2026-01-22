@@ -1,7 +1,6 @@
 package com.example.bookstore.controllers.angularController;
 
 import com.example.bookstore.criteriaQuery.AuthorQueryCriteria;
-import com.example.bookstore.criteriaQuery.Query;
 import com.example.bookstore.dtos.AuthorDto;
 import com.example.bookstore.dtos.table.DataTableInput;
 import com.example.bookstore.dtos.table.DataTableOutput;
@@ -10,14 +9,12 @@ import com.example.bookstore.models.Author;
 import com.example.bookstore.services.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -27,13 +24,6 @@ public class AuthorResources {
 
     private final AuthorService service;
     private final AuthorMapper authorMapper;
-
-    @Query(blurry = "name", joinName = "books", propName = "title")
-    private String blurry;
-
-    private Pageable pageable;
-
-    private List<Date> dateRange;
 
     public AuthorResources(AuthorService service, AuthorMapper authorMapper) {
         this.service = service;
@@ -70,6 +60,7 @@ public class AuthorResources {
        service.createAuthor(authorDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
     // api/admin/author/delete/{id}
     @DeleteMapping("/author/delete/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {

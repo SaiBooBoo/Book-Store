@@ -15,7 +15,7 @@ public class BookDto {
     private String title;
     private String isbn;
     @NotNull(message= "Price is required!")
-    @DecimalMin(value= "0.0", inclusive = false, message= "Price must be greater than 0")
+    @DecimalMin(value= "0", inclusive = false, message= "Price must be greater than 0")
     private BigDecimal price;
     @NotNull(message= "Stock is required!")
     @DecimalMin(value = "0", message = "Stock must me 0 or more")
