@@ -1,5 +1,8 @@
 package com.example.bookstore.services;
 
+import com.example.bookstore.criteriaQuery.BookQueryCriteria;
+import com.example.bookstore.criteriaQuery.CriteriaUtils;
+import com.example.bookstore.criteriaQuery.QueryHelper;
 import com.example.bookstore.dtos.BookDto;
 import com.example.bookstore.dtos.table.DataTableInput;
 import com.example.bookstore.mapper.BookMapper;
@@ -110,4 +113,8 @@ public class BookService {
                 .orElseThrow(() -> new RuntimeException("Book with that does not exist"));
     }
 
+    public Page<Book> findBooks(BookQueryCriteria criteria) {
+        Pageable pageable = CriteriaUtils.getPageable(criteria);
+        return bookRepo.findAll((root, cq, cb) ->QueryHelper.getPredicate(root, criteria,cq, cb), pageable);
+    }
 }

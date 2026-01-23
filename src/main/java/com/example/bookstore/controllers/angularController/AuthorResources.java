@@ -72,7 +72,6 @@ public class AuthorResources {
     public ResponseEntity<DataTableOutput<AuthorDto>> authorsDataTable(
             @RequestBody DataTableInput<AuthorQueryCriteria> input
     ) {
-        // continue here tomorrow
         AuthorQueryCriteria criteria = input.getQueryCriteria();
         criteria.setPageable(input.getPageable());
         Page<Author> page = service.findAuthors(criteria);
@@ -89,11 +88,9 @@ public class AuthorResources {
         return ResponseEntity.ok(author);
     }
 
-
     private AuthorQueryCriteria deserialize(JsonNode jsonNode) {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(jsonNode, AuthorQueryCriteria.class);
     }
-
 
 }

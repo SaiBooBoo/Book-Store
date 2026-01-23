@@ -1,6 +1,9 @@
 package com.example.bookstore.controllers.angularController;
 
+import com.example.bookstore.criteriaQuery.BookQueryCriteria;
 import com.example.bookstore.dtos.BookDto;
+import com.example.bookstore.dtos.table.DataTableInput;
+import com.example.bookstore.dtos.table.DataTableOutput;
 import com.example.bookstore.mapper.BookMapper;
 import com.example.bookstore.models.Book;
 import com.example.bookstore.services.BookService;
@@ -16,10 +19,12 @@ public class BookResources {
 
     private final BookService service;
     private final BookMapper mapper;
+    private final BookMapper bookMapper;
 
-    public BookResources(BookService bookService, BookMapper mapper) {
+    public BookResources(BookService bookService, BookMapper mapper, BookMapper bookMapper) {
         this.service = bookService;
         this.mapper = mapper;
+        this.bookMapper = bookMapper;
     }
 
     @GetMapping("/books")
@@ -58,5 +63,19 @@ public class BookResources {
           dto.setAuthorId(request.getAuthorId());
         System.out.println(dto.getAuthorId());
         return ResponseEntity.ok(dto);
+    }
+
+
+    @PostMapping("/books/datatable")
+    public ResponseEntity<DataTableOutput<BookDto>> booksDataTable (
+            @RequestBody DataTableInput<BookQueryCriteria> input
+            ) {
+        BookQueryCriteria criteria = input.getQueryCriteria();
+        criteria.setPageable(input.getPageable());
+        Page<Book> page = service.findBooks(criteria);
+        Page<BookDto> dtoPage = page.map(bookMapper::toDto);
+
+        return ResponseEntity.ok(DataTableOutput.of(dtoPage, input.getDraw()));
+
     }
 }
