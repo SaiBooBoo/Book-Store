@@ -1,7 +1,8 @@
-package com.example.bookstore.config;
+package com.example.bookstore.security;
 
 import com.example.bookstore.models.User;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,17 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter @Setter
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
-
     public CustomUserDetails(User user) {
         this.user = user;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
@@ -30,6 +26,15 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        String roleName = user.getRole().name(); // e.g. "ADMIN"
+        if (!roleName.startsWith("ROLE_")) {
+            roleName = "ROLE_" + roleName;        // becomes "ROLE_ADMIN"
+        }
+        return List.of(new SimpleGrantedAuthority(roleName));
     }
 
     @Override
@@ -51,4 +56,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

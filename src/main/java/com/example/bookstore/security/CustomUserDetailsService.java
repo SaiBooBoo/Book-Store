@@ -1,4 +1,4 @@
-package com.example.bookstore.config;
+package com.example.bookstore.security;
 
 import com.example.bookstore.models.User;
 import com.example.bookstore.repositories.UserRepository;
@@ -8,16 +8,15 @@ import org.springframework.security.core.userdetails.*;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repo;
 
-    public CustomUserDetailsService(UserRepository userRepository){
-        this.userRepository = userRepository;
+    public CustomUserDetailsService(UserRepository repo){
+        this.repo = repo;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        User user = userRepository.findByUsername(username)
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = repo.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
 
