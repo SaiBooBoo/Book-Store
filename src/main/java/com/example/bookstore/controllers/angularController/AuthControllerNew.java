@@ -8,6 +8,7 @@ import com.example.bookstore.models.User;
 import com.example.bookstore.repositories.UserRepository;
 import com.example.bookstore.security.CustomUserDetails;
 import com.example.bookstore.security.JwtUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -59,6 +61,12 @@ public class AuthControllerNew {
         }
 
         User  u = new User();
+        if(userRepo.existsByUsername(req.username())) {
+            throw new ResponseStatusException (
+                    HttpStatus.BAD_REQUEST,
+                    "Username already exists"
+            );
+        }
         u.setUsername(req.username());
         u.setPassword(passwordEncoder.encode(req.password()));
         u.setRole(Role.ROLE_USER);

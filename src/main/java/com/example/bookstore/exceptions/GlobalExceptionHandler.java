@@ -1,5 +1,6 @@
 package com.example.bookstore.exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 )
         );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDuplicate(DataIntegrityViolationException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of("username", "Username already exists"));
     }
 
 
