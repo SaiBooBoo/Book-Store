@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,27 +43,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            Claims claims = jwtUtils.extractClaims(token);
-            String username = claims.getSubject();
+            if (jwtUtils.validateToken(token)) {
+                Claims claims = jwtUtils.extractClaims(token);
+                String username = claims.getSubject();
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            @SuppressWarnings("unchecked")
-            List<String> roles = claims.get("roles", List.class);
+                @SuppressWarnings("unchecked")
+                List<String> roles = claims.get("roles", List.class);
 
-            List<GrantedAuthority> authorities = roles.stream()
-                    .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
-                    .toList();
+                List<GrantedAuthority> authorities = roles.stream()
+                        .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(role))
+                        .toList();
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            authorities
-                    );
 
-            SecurityContextHolder.getContext()
-                    .setAuthentication(authentication);
-        }
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                authorities
+                        );
 
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
+                }
+            }
         filterChain.doFilter(request, response);
     }
 }

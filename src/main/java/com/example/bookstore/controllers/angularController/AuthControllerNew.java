@@ -48,6 +48,7 @@ public class AuthControllerNew {
 
         String token = jwtUtils.generateToken(userDetails);
         long expiresIn = jwtUtils.getExpirationMs();
+
         return ResponseEntity.ok(new JwtResponse(token, "Bearer", expiresIn));
     }
 
