@@ -8,6 +8,7 @@ import com.example.bookstore.models.User;
 import com.example.bookstore.repositories.UserRepository;
 import com.example.bookstore.security.CustomUserDetails;
 import com.example.bookstore.security.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,22 +23,23 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthControllerNew {
+@RequiredArgsConstructor
+public class AuthenticationResources {
 
     private final AuthenticationManager authManager;
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
-    public AuthControllerNew(AuthenticationManager authManager,
-                             UserRepository userRepo,
-                             PasswordEncoder passwordEncoder,
-                             JwtUtils jwtUtils) {
-        this.authManager = authManager;
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-    }
+//    public AuthControllerNew(AuthenticationManager authManager,
+//                             UserRepository userRepo,
+//                             PasswordEncoder passwordEncoder,
+//                             JwtUtils jwtUtils) {
+//        this.authManager = authManager;
+//        this.userRepo = userRepo;
+//        this.passwordEncoder = passwordEncoder;
+//        this.jwtUtils = jwtUtils;
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest req) {
