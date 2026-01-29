@@ -57,6 +57,8 @@ public class AuthControllerNew {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
 
+        System.out.println("START REGISTER");
+
         if (userRepo.existsByUsername(req.username())) {
             return ResponseEntity.badRequest().body(
                     Map.of("username", "Username already exists")
@@ -69,7 +71,9 @@ public class AuthControllerNew {
         u.setRole(Role.ROLE_USER);
 
         userRepo.save(u);
-        return ResponseEntity.ok("User registered");
+        System.out.println("USER SAVED");
+
+        return ResponseEntity.ok().build();
     }
 
 }
